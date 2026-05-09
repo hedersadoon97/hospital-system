@@ -24,7 +24,6 @@ limiter = Limiter(
 load_dotenv()
 csrf = CSRFProtect(app)
 MANAGER_SECRET = os.getenv("MANAGER_SECRET")
-app.secret_key = os.getenv("SECRET_KEY")
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SECURE"] = False
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
