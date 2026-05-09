@@ -2717,11 +2717,15 @@ def pending_notifications_count():
     })
 
 
+import os
+
 if __name__ == "__main__":
 
-   socketio.run(
-    app,
-    host="0.0.0.0",
-    port=5001,
-    debug=False
-)
+    port = int(os.environ.get("PORT", 8080))
+
+    socketio.run(
+        app,
+        host="0.0.0.0",
+        port=port,
+        debug=False
+    )
