@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+الأرشيف الخاص بالشفتات
+</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+
+margin:0;
+padding:20px;
+
+font-family:'Cairo';
+
+background:
+linear-gradient(
+135deg,
+#020617,
+#0f172a
+);
+
+color:white;
+
+}
+
+.title{
+
+font-size:34px;
+
+font-weight:900;
+
+margin-bottom:25px;
+
+text-align:center;
+
+}
+
+.filters{
+
+display:flex;
+
+gap:10px;
+
+flex-wrap:wrap;
+
+justify-content:center;
+
+margin-bottom:25px;
+
+}
+
+.filterBtn{
+
+border:none;
+
+padding:12px 18px;
+
+border-radius:14px;
+
+background:#1e293b;
+
+color:white;
+
+font-family:'Cairo';
+
+font-size:15px;
+
+font-weight:800;
+
+cursor:pointer;
+
+transition:.25s;
+
+}
+
+.filterBtn:hover{
+
+transform:scale(1.05);
+
+}
+
+.filterBtn.active{
+
+background:
+linear-gradient(
+135deg,
+#2563eb,
+#3b82f6
+);
+
+}
+
+.tableWrap{
+
+overflow-x:auto;
+
+border-radius:24px;
+
+background:#0f172a;
+
+border:
+1px solid rgba(255,255,255,.08);
+
+}
+
+table{
+
+width:100%;
+
+border-collapse:collapse;
+
+min-width:1000px;
+
+}
+
+th{
+
+background:#1e293b;
+
+padding:16px;
+
+font-size:15px;
+
+}
+
+td{
+
+padding:14px;
+
+text-align:center;
+
+border-top:
+1px solid rgba(255,255,255,.06);
+
+}
+
+.shiftBadge{
+
+padding:8px 14px;
+
+border-radius:999px;
+
+font-size:13px;
+
+font-weight:800;
+
+}
+
+.morning{
+
+background:#f59e0b;
+
+color:white;
+
+}
+
+.evening{
+
+background:#2563eb;
+
+color:white;
+
+}
+
+.night{
+
+background:#7c3aed;
+
+color:white;
+
+}
+/* ===== زر العودة ===== */
+
+.returnBtn{
+
+border:none;
+
+padding:12px 22px;
+
+border-radius:14px;
+
+background:
+
+linear-gradient(
+135deg,
+#2563eb,
+#3b82f6
+);
+
+color:white;
+
+font-family:'Cairo';
+
+font-size:15px;
+
+font-weight:800;
+
+cursor:pointer;
+
+transition:.25s;
+
+box-shadow:
+
+0 10px 25px rgba(59,130,246,.35);
+
+}
+
+.returnBtn:hover{
+
+transform:scale(1.05);
+
+filter:brightness(1.08);
+
+}
+@media(max-width:768px){
+
+body{
+
+padding:12px;
+
+}
+
+.title{
+
+font-size:26px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="title">
+🧾 الأرشيف الخاص بالشفتات
+</div>
+
+<div class="filters">
+
+<button class="filterBtn active"
+onclick="loadShift('all',this)">
+الكل
+</button>
+
+<button class="filterBtn"
+onclick="loadShift('الصباحي',this)">
+🌞 الشفت الصباحي
+</button>
+
+<button class="filterBtn"
+onclick="loadShift('العصري',this)">
+🌇 الشفت العصري
+</button>
+
+<button class="filterBtn"
+onclick="loadShift('الليلي',this)">
+🌙 الشفت الليلي
+</button>
+<button class="returnBtn"
+onclick="window.location='/dashboard'">
+
+⬅️ العودة
+
+</button>
+
+</div>
+<div style="
+margin-bottom:18px;
+display:flex;
+justify-content:center;
+">
+
+<input
+id="searchInput"
+type="text"
+placeholder="🔎 ابحث عن اسم مريض..."
+style="
+width:100%;
+max-width:420px;
+padding:14px 18px;
+border:none;
+border-radius:16px;
+background:#1e293b;
+color:white;
+font-family:'Cairo';
+font-size:15px;
+outline:none;
+">
+
+</div>
+<div
+id="archiveCount"
+style="
+margin-bottom:14px;
+text-align:center;
+font-size:15px;
+opacity:.8;
+">
+
+عدد النتائج: 0
+
+</div>
+<div class="tableWrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>#</th>
+
+<th>الاسم</th>
+
+<th>العمر</th>
+
+<th>القسم</th>
+
+<th>الحالة</th>
+
+<th>التاريخ</th>
+
+<th>نوع الشفت</th>
+
+<th>وقت الأرشفة</th>
+
+</tr>
+
+</thead>
+
+<tbody id="tableBody"></tbody>
+
+</table>
+
+</div>
+
+<script>
+
+async function loadShift(
+shift="all",
+btn=null
+){
+
+document
+.querySelectorAll(".filterBtn")
+.forEach(b=>b.classList.remove("active"));
+
+if(btn){
+
+btn.classList.add("active");
+
+}
+
+const res = await fetch(
+
+`/api/shift_archive?shift=${shift}`
+
+);
+
+const data = await res.json();
+document.getElementById(
+"archiveCount"
+).innerText =
+`عدد النتائج: ${data.length}`;
+
+const searchValue =
+document.getElementById("searchInput")
+.value
+.toLowerCase()
+.trim();
+
+const body =
+document.getElementById(
+"tableBody"
+);
+
+body.innerHTML = "";
+
+if(data.length === 0){
+
+body.innerHTML = `
+
+<tr>
+
+<td colspan="8">
+
+لا توجد بيانات
+
+</td>
+
+</tr>
+
+`;
+
+return;
+
+}
+
+let grouped = {};
+
+data.forEach(p => {
+
+    if(!grouped[p.date]){
+
+        grouped[p.date] = [];
+
+    }
+
+    grouped[p.date].push(p);
+
+});
+
+let index = 1;
+
+Object.keys(grouped)
+.sort()
+.reverse()
+.forEach(date => {
+
+    body.innerHTML += `
+
+    <tr>
+
+        <td colspan="8"
+        style="
+        background:#1e293b;
+        font-weight:800;
+        font-size:18px;
+        padding:18px;
+        text-align:center;
+        ">
+
+        📅 ${date}
+
+        </td>
+
+    </tr>
+
+    `;
+
+   grouped[date].forEach(p => {
+
+    if(
+        searchValue &&
+        !p.name.toLowerCase().includes(searchValue)
+    ){
+        return;
+    }
+
+    let badge = "";
+
+    if(p.shift_type === "الصباحي"){
+
+        badge =
+        '<span class="shiftBadge morning">🌞 صباحي</span>';
+
+    }
+
+        else if(p.shift_type === "العصري"){
+
+            badge =
+            '<span class="shiftBadge evening">🌇 عصري</span>';
+
+        }
+
+        else{
+
+            badge =
+            '<span class="shiftBadge night">🌙 ليلي</span>';
+
+        }
+
+        body.innerHTML += `
+
+        <tr>
+
+        <td>${index++}</td>
+
+        <td>${p.name}</td>
+
+        <td>${p.age}</td>
+
+        <td>${p.section}</td>
+
+        <td>${p.status}</td>
+
+        <td>${p.date}</td>
+
+        <td>${badge}</td>
+
+        <td>${p.archived_at}</td>
+
+        </tr>
+
+        `;
+
+    });
+
+});
+
+}
+
+window.addEventListener(
+"DOMContentLoaded",
+()=>{
+    loadShift();
+});
+
+</script>
+
+</body>
+
+</html>

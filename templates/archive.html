@@ -1,0 +1,257 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>الأرشيف</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;600;800&display=swap" rel="stylesheet">
+
+<style>
+    /* ===== زر العودة ===== */
+
+.returnBtn{
+
+border:none;
+
+padding:12px 22px;
+
+border-radius:16px;
+
+background:
+
+linear-gradient(
+135deg,
+#2563eb,
+#3b82f6
+);
+
+color:white;
+
+font-size:16px;
+
+font-family:'Cairo';
+
+font-weight:800;
+
+cursor:pointer;
+
+transition:.25s;
+
+box-shadow:
+
+0 10px 25px rgba(59,130,246,.35);
+
+margin-right:10px;
+
+}
+
+/* ===== Hover ===== */
+
+.returnBtn:hover{
+
+transform:translateY(-3px);
+
+filter:brightness(1.08);
+
+}
+
+/* ===== موبايل ===== */
+
+@media(max-width:700px){
+
+.returnBtn{
+
+width:100%;
+
+margin-top:10px;
+
+margin-right:0;
+
+}
+
+}
+body{
+margin:0;
+background:#0f172a;
+font-family:'Cairo';
+color:white;
+padding:20px;
+}
+
+.top{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-bottom:20px;
+}
+
+input,select{
+padding:14px;
+border:none;
+border-radius:14px;
+background:#1e293b;
+color:white;
+font-family:'Cairo';
+}
+
+button{
+padding:14px 18px;
+border:none;
+border-radius:14px;
+background:#3b82f6;
+color:white;
+font-family:'Cairo';
+cursor:pointer;
+font-weight:700;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:#1e293b;
+border-radius:20px;
+overflow:hidden;
+}
+
+th{
+background:#334155;
+padding:14px;
+}
+
+td{
+padding:12px;
+border-bottom:1px solid #475569;
+text-align:center;
+}
+
+tr:hover{
+background:#334155;
+}
+</style>
+</head>
+
+<body>
+
+<h2>🗂️ أرشيف المرضى</h2>
+
+<div class="top">
+
+<input id="search"
+placeholder="بحث بالاسم">
+
+<input type="date" id="date">
+
+<select id="section">
+<option value="all">كل الأقسام</option>
+<option>الاستشارية</option>
+<option>الانعاش</option>
+<option>ردهة قلبية رجال</option>
+<option>ردهة قلبية نساء</option>
+</select>
+
+<button onclick="loadArchive()">
+🔍 بحث
+</button>
+
+<button
+class="returnBtn"
+onclick="window.location='/dashboard'">
+
+⬅️ العودة
+
+</button>
+</div>
+<div
+id="archiveCount"
+style="
+margin-bottom:14px;
+font-size:15px;
+opacity:.8;
+">
+عدد النتائج: 0
+</div>
+<table>
+
+<thead>
+<tr>
+<th>#</th>
+<th>الاسم</th>
+<th>العمر</th>
+<th>القسم</th>
+<th>الحالة</th>
+<th>الوقت</th>
+<th>التاريخ</th>
+</tr>
+</thead>
+
+<tbody id="tbody"></tbody>
+
+</table>
+
+<script>
+
+async function loadArchive(){
+
+const search =
+document.getElementById("search").value;
+
+const date =
+document.getElementById("date").value;
+
+const section =
+document.getElementById("section").value;
+
+const r = await fetch(
+`/api/archive?search=${encodeURIComponent(search)}&date=${encodeURIComponent(date)}&section=${encodeURIComponent(section)}`
+);
+
+const data = await r.json();
+document.getElementById(
+"archiveCount"
+).innerText =
+`عدد النتائج: ${data.length}`;
+
+let html = "";
+
+if(data.length===0){
+
+html=`<tr>
+<td colspan='7'>
+لا توجد بيانات
+</td>
+</tr>`;
+
+}else{
+
+for(let i=0;i<data.length;i++){
+
+const p = data[i];
+
+html += `
+<tr>
+<td>${i+1}</td>
+<td>${p.name}</td>
+<td>${p.age}</td>
+<td>${p.section}</td>
+<td>${p.status}</td>
+<td>${p.time}</td>
+<td>${p.date}</td>
+</tr>
+`;
+}
+
+}
+
+document.getElementById("tbody").innerHTML = html;
+}
+
+window.addEventListener(
+"DOMContentLoaded",
+loadArchive
+);
+
+</script>
+
+</body>
+</html>

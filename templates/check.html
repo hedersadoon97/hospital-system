@@ -1,0 +1,1797 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>بوابة نتائج المختبر الخاصة بمستشفى نفط البصرة
+</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+/* ========================= */
+/* Luxury Cards */
+/* ========================= */
+
+.luxurySection{
+
+margin-top:35px;
+
+}
+
+.luxuryHeader{
+
+font-size:30px;
+
+font-weight:900;
+
+text-align:center;
+
+margin-bottom:25px;
+
+background:linear-gradient(135deg,#60a5fa,#06b6d4);
+
+-webkit-background-clip:text;
+background-clip:text;
+
+-webkit-text-fill-color:transparent;
+
+}
+
+.luxuryGrid{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(250px,1fr));
+
+gap:22px;
+
+}
+
+.luxCard{
+
+position:relative;
+
+overflow:hidden;
+
+padding:30px 24px;
+
+border-radius:30px;
+
+background:
+linear-gradient(
+145deg,
+rgba(15,23,42,.92),
+rgba(30,41,59,.78)
+);
+
+border:1px solid rgba(255,255,255,.08);
+
+backdrop-filter:blur(20px);
+
+transition:.45s;
+
+box-shadow:
+0 25px 60px rgba(0,0,0,.35);
+
+}
+
+.luxCard:hover{
+
+transform:
+translateY(-10px)
+scale(1.02);
+
+border-color:
+rgba(96,165,250,.35);
+
+box-shadow:
+0 35px 70px rgba(37,99,235,.28);
+
+}
+
+.luxGlow{
+
+position:absolute;
+
+width:180px;
+
+height:180px;
+
+background:
+radial-gradient(
+circle,
+rgba(59,130,246,.28),
+transparent 70%
+);
+
+top:-60px;
+
+left:-60px;
+
+pointer-events:none;
+
+}
+
+.luxIcon{
+
+width:78px;
+
+height:78px;
+
+border-radius:24px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:38px;
+
+margin-bottom:22px;
+
+background:
+linear-gradient(
+135deg,
+#2563eb,
+#06b6d4
+);
+
+box-shadow:
+0 20px 40px rgba(37,99,235,.35);
+
+}
+
+.luxTitle{
+
+font-size:24px;
+
+font-weight:900;
+
+margin-bottom:15px;
+
+color:white;
+
+}
+
+.luxText{
+
+font-size:15px;
+
+line-height:2.1;
+
+color:#cbd5e1;
+
+}
+
+.programmerCard{
+
+background:
+linear-gradient(
+145deg,
+rgba(30,41,59,.95),
+rgba(15,23,42,.88)
+);
+
+border:1px solid rgba(59,130,246,.22);
+
+}
+
+.programmerName{
+
+font-size:24px;
+
+color:#60a5fa;
+
+font-weight:900;
+
+}
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+:root{
+--bg:#020617;
+--card:rgba(15,23,42,.82);
+--border:rgba(255,255,255,.08);
+--blue:#3b82f6;
+--cyan:#06b6d4;
+--green:#22c55e;
+--yellow:#f59e0b;
+--red:#ef4444;
+--text:#fff;
+--muted:#94a3b8;
+}
+/* ☀️ الوضع النهاري */
+
+.lightMode{
+
+--bg:#f1f5f9;
+--card:rgba(255,255,255,.95);
+--border:rgba(15,23,42,.08);
+
+--text:#0f172a;
+--muted:#475569;
+
+background:#e2e8f0 !important;
+color:#0f172a !important;
+
+}
+
+body{
+font-family:'Cairo',sans-serif;
+
+background:
+radial-gradient(circle at top right,#1d4ed8 0%,transparent 28%),
+radial-gradient(circle at bottom left,#0891b2 0%,transparent 30%),
+radial-gradient(circle at center,#0f172a 0%,#020617 65%);
+
+min-height:100vh;
+overflow-x:hidden;
+position:relative;
+
+color:var(--text);
+
+display:flex;
+align-items:center;
+justify-content:center;
+padding:30px;
+
+transition:.35s;
+}
+
+/* ☀️ الوضع النهاري */
+
+body.lightMode{
+
+background:
+linear-gradient(135deg,#e2e8f0,#f8fafc);
+
+}
+
+.bgBlur1,
+.bgBlur2{
+position:fixed;
+border-radius:50%;
+filter:blur(120px);
+pointer-events:none;
+opacity:.18;
+}
+
+.bgBlur1{
+width:420px;
+height:420px;
+background:#2563eb;
+top:-120px;
+right:-120px;
+}
+
+.bgBlur2{
+width:360px;
+height:360px;
+background:#06b6d4;
+bottom:-120px;
+left:-120px;
+}
+
+.portal{
+width:100%;
+max-width:760px;
+background:var(--card);
+color:var(--text);
+backdrop-filter:blur(22px);
+border:1px solid var(--border);
+border-radius:38px;
+padding:40px;
+position:relative;
+overflow:hidden;
+box-shadow:
+0 40px 80px rgba(0,0,0,.45),
+0 0 0 1px rgba(255,255,255,.03) inset;
+animation:fadeIn .7s ease;
+}
+
+.portal::before{
+content:"";
+position:absolute;
+inset:0;
+background:linear-gradient(
+135deg,
+rgba(255,255,255,.05),
+transparent 35%
+);
+pointer-events:none;
+}
+
+.logoWrap{
+width:110px;
+height:110px;
+margin:auto;
+margin-bottom:22px;
+border-radius:32px;
+background:
+linear-gradient(135deg,#2563eb,#06b6d4);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:52px;
+box-shadow:
+0 25px 50px rgba(37,99,235,.35),
+0 0 0 8px rgba(255,255,255,.03);
+}
+
+.title{
+font-size:40px;
+font-weight:900;
+margin-bottom:12px;
+text-align:center;
+}
+
+.subtitle{
+color:var(--muted);
+font-size:15px;
+line-height:2;
+max-width:520px;
+margin:auto;
+text-align:center;
+margin-bottom:35px;
+}
+
+.searchCard{
+background:rgba(255,255,255,.03);
+border:1px solid rgba(255,255,255,.05);
+padding:18px;
+border-radius:28px;
+margin-bottom:28px;
+}
+
+.searchRow{
+display:flex;
+gap:14px;
+align-items:center;
+}
+
+.input{
+width:100%;
+height:64px;
+border-radius:22px;
+border:1px solid rgba(255,255,255,.06);
+background:#0f172a;
+padding:0 20px;
+font-family:'Cairo';
+font-size:16px;
+color:white;
+outline:none;
+transition:.25s;
+}
+
+.input:focus{
+border-color:rgba(59,130,246,.45);
+box-shadow:0 0 0 5px rgba(59,130,246,.15);
+}
+
+.searchBtn{
+min-width:170px;
+height:64px;
+border:none;
+border-radius:22px;
+background:linear-gradient(135deg,#2563eb,#3b82f6);
+color:white;
+font-family:'Cairo';
+font-size:16px;
+font-weight:800;
+cursor:pointer;
+transition:.3s;
+box-shadow:0 20px 35px rgba(37,99,235,.35);
+}
+
+.searchBtn:hover{
+transform:translateY(-3px) scale(1.02);
+}
+
+.resultCard{
+
+width:min(100%, 420px);
+
+margin:auto;
+
+padding:20px;
+
+border-radius:28px;
+
+background:
+linear-gradient(
+145deg,
+#0f172a,
+#111827
+);
+
+box-shadow:
+0 15px 40px rgba(0,0,0,.45);
+
+display:flex;
+
+flex-direction:column;
+
+gap:16px;
+
+overflow:hidden;
+
+}
+
+.resultTop{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:18px;
+margin-bottom:28px;
+flex-wrap:wrap;
+}
+
+.patientInfo{
+display:flex;
+align-items:center;
+gap:16px;
+}
+
+.avatar{
+width:72px;
+height:72px;
+border-radius:24px;
+background:linear-gradient(135deg,#2563eb,#06b6d4);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:30px;
+font-weight:900;
+box-shadow:0 15px 30px rgba(37,99,235,.25);
+}
+
+.patientName{
+font-size:30px;
+font-weight:900;
+margin-bottom:5px;
+}
+
+.patientSub{
+color:var(--muted);
+font-size:14px;
+}
+
+.statusBadge{
+padding:12px 22px;
+border-radius:999px;
+font-size:15px;
+font-weight:900;
+}
+.status-working{
+background:rgba(59,130,246,.15);
+color:#93c5fd;
+}
+
+.status-sample{
+background:rgba(59,130,246,.15);
+color:#93c5fd;
+}
+
+.status-warning{
+background:rgba(245,158,11,.15);
+color:#fde68a;
+}
+
+.status-danger{
+background:rgba(239,68,68,.15);
+color:#fca5a5;
+}
+
+.status-done{
+background:rgba(34,197,94,.15);
+color:#86efac;
+}
+
+.status-warning{
+background:rgba(245,158,11,.15);
+color:#fde68a;
+}
+
+.status-danger{
+background:rgba(239,68,68,.15);
+color:#fca5a5;
+}
+
+.status-done{
+background:rgba(34,197,94,.15);
+color:#86efac;
+}
+
+.infoGrid{
+
+display:grid;
+
+grid-template-columns:
+1fr 1fr;
+
+gap:10px;
+
+margin-top:14px;
+
+align-items:stretch;
+
+}
+
+.infoBox{
+
+background:
+rgba(255,255,255,.05);
+
+border-radius:18px;
+
+padding:12px;
+
+min-height:95px;
+
+display:flex;
+
+flex-direction:column;
+
+justify-content:center;
+
+align-items:center;
+
+text-align:center;
+
+border:
+1px solid rgba(255,255,255,.05);
+
+overflow:hidden;
+
+}
+
+.infoLabel{
+font-size:13px;
+color:var(--muted);
+margin-bottom:10px;
+}
+
+.infoValue{
+font-size:20px;
+font-weight:800;
+line-height:1.8;
+}
+
+.noteCard{
+margin-top:20px;
+background:linear-gradient(
+135deg,
+rgba(59,130,246,.08),
+rgba(6,182,212,.05)
+);
+border:1px solid rgba(59,130,246,.12);
+border-radius:24px;
+padding:24px;
+}
+
+.noteTitle{
+font-size:16px;
+font-weight:900;
+margin-bottom:14px;
+color:#93c5fd;
+}
+
+.noteText{
+
+line-height:2.1;
+
+font-size:16px;
+
+color:#ffffff;
+
+font-weight:700;
+
+word-break:break-word;
+
+}
+
+.emptyBox{
+margin-top:25px;
+padding:22px;
+text-align:center;
+border-radius:24px;
+background:rgba(239,68,68,.08);
+border:1px solid rgba(239,68,68,.12);
+color:#fecaca;
+font-weight:800;
+}
+
+.footer{
+margin-top:30px;
+text-align:center;
+font-size:13px;
+color:#64748b;
+line-height:2;
+}
+
+@keyframes fadeIn{
+from{
+opacity:0;
+transform:translateY(20px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+@keyframes slideUp{
+from{
+opacity:0;
+transform:translateY(15px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+@media(max-width:700px){
+
+.portal{
+padding:26px;
+border-radius:28px;
+}
+
+.title{
+font-size:31px;
+}
+
+.searchRow{
+flex-direction:column;
+}
+
+.searchBtn{
+width:100%;
+}
+
+.patientName{
+font-size:24px;
+}
+
+.resultTop{
+flex-direction:column;
+align-items:flex-start;
+}
+
+}
+#assistantBtn{
+
+position:fixed;
+
+bottom:25px;
+
+left:25px;
+
+width:65px;
+
+height:65px;
+
+border-radius:22px;
+
+background:linear-gradient(135deg,#2563eb,#06b6d4);
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:28px;
+
+cursor:pointer;
+
+box-shadow:0 20px 40px rgba(37,99,235,.35);
+
+z-index:9999;
+
+}
+
+#assistantBox{
+
+position:fixed;
+
+bottom:100px;
+
+left:25px;
+
+width:320px;
+
+background:rgba(15,23,42,.92);
+
+backdrop-filter:blur(20px);
+
+border:1px solid rgba(255,255,255,.08);
+
+padding:22px;
+
+border-radius:28px;
+
+display:none;
+
+z-index:9999;
+
+animation:fadeIn .35s ease;
+
+}
+
+.assistantTitle{
+
+font-size:18px;
+
+font-weight:900;
+
+margin-bottom:15px;
+
+}
+
+.assistantContent{
+
+line-height:2;
+
+color:#cbd5e1;
+
+font-size:14px;
+
+}
+#themeBtn{
+
+position:fixed;
+
+top:20px;
+
+left:20px;
+
+width:60px;
+
+height:60px;
+
+border:none;
+
+border-radius:18px;
+
+background:linear-gradient(135deg,#2563eb,#06b6d4);
+
+color:white;
+
+font-size:24px;
+
+cursor:pointer;
+
+z-index:99999;
+
+box-shadow:0 15px 35px rgba(37,99,235,.35);
+
+transition:.3s;
+
+}
+
+#themeBtn:hover{
+
+transform:scale(1.08);
+
+}
+@media(max-width:768px){
+
+body{
+padding:14px !important;
+}
+
+.portal{
+padding:22px !important;
+border-radius:24px !important;
+}
+
+.title{
+font-size:28px !important;
+}
+
+.subtitle{
+font-size:14px !important;
+line-height:1.9 !important;
+}
+
+.searchRow{
+flex-direction:column !important;
+}
+
+.searchBtn{
+width:100% !important;
+min-width:100% !important;
+}
+
+.input{
+height:58px !important;
+font-size:15px !important;
+}
+
+.resultTop{
+flex-direction:column !important;
+align-items:flex-start !important;
+}
+
+.patientInfo{
+width:100% !important;
+}
+
+.patientName{
+font-size:24px !important;
+}
+
+.infoGrid{
+
+grid-template-columns:
+1fr 1fr !important;
+
+gap:10px;
+
+}
+
+.noteCard{
+padding:18px !important;
+}
+
+}
+@media(max-width:600px){
+
+.resultCard{
+
+width:95%;
+
+padding:16px;
+
+border-radius:24px;
+
+}
+
+.infoGrid{
+
+grid-template-columns:1fr;
+
+}
+
+.patientName{
+
+font-size:30px;
+
+}
+
+.statusBadge{
+
+font-size:16px;
+
+padding:12px 18px;
+
+}
+
+}
+@media(max-width:600px){
+
+.infoGrid{
+
+grid-template-columns:
+1fr 1fr;
+
+gap:8px;
+
+}
+
+.infoBox{
+
+padding:10px;
+
+min-height:82px;
+
+}
+
+.infoBox .value{
+
+font-size:20px;
+
+}
+
+}
+/* ========================= */
+/* 📱 تصميم خاص للموبايل */
+/* ========================= */
+
+@media(max-width:700px){
+
+body{
+
+padding:12px;
+
+overflow-x:hidden;
+
+}
+
+/* الكارد الرئيسي */
+
+.resultCard{
+
+width:100%;
+
+max-width:100%;
+
+padding:18px;
+
+border-radius:28px;
+
+background:
+linear-gradient(
+180deg,
+#111827,
+#0f172a
+);
+
+box-shadow:
+0 15px 40px rgba(0,0,0,.45);
+
+}
+
+/* رأس المريض */
+
+.patientHeader{
+
+display:flex;
+
+align-items:center;
+
+justify-content:space-between;
+
+gap:14px;
+
+margin-bottom:10px;
+
+}
+
+.patientName{
+
+font-size:34px;
+
+line-height:1.3;
+
+font-weight:900;
+
+}
+
+/* صورة الاسم */
+
+.avatar{
+
+width:78px;
+
+height:78px;
+
+border-radius:24px;
+
+font-size:34px;
+
+}
+
+/* شارة الحالة */
+
+.statusBadge{
+
+width:100%;
+
+padding:14px;
+
+font-size:20px;
+
+border-radius:22px;
+
+margin-top:10px;
+
+}
+
+/* شبكة المعلومات */
+
+.infoGrid{
+
+display:grid;
+
+grid-template-columns:
+1fr 1fr;
+
+gap:10px;
+
+margin-top:18px;
+
+}
+
+/* صناديق المعلومات */
+
+.infoBox{
+
+padding:14px;
+
+border-radius:22px;
+
+background:
+rgba(255,255,255,.05);
+
+backdrop-filter:
+blur(12px);
+
+min-height:95px;
+
+display:flex;
+
+flex-direction:column;
+
+justify-content:center;
+
+align-items:center;
+
+}
+
+/* عنوان الصندوق */
+
+.infoTitle{
+
+font-size:13px;
+
+opacity:.8;
+
+margin-bottom:8px;
+
+}
+
+/* القيمة */
+
+.infoValue{
+
+font-size:22px;
+
+font-weight:900;
+
+line-height:1.4;
+
+text-align:center;
+
+word-break:break-word;
+
+}
+
+/* إخفاء الزخارف الثقيلة */
+
+.floatingShapes,
+.bigGlow,
+.sideDecoration{
+
+display:none;
+
+}
+
+/* الفورم */
+
+.searchForm{
+
+padding:12px;
+
+border-radius:22px;
+
+}
+
+/* الانبوت */
+
+.input{
+
+height:58px;
+
+font-size:18px;
+
+border-radius:18px;
+
+}
+
+/* زر البحث */
+
+.searchBtn{
+
+height:58px;
+
+font-size:20px;
+
+border-radius:18px;
+
+width:100%;
+
+}
+
+/* الفوتر */
+
+.footer{
+
+font-size:13px;
+
+text-align:center;
+
+opacity:.8;
+
+margin-top:20px;
+
+}
+
+}
+/* ========================= */
+/* 📱 تحسين الخط للموبايل */
+/* ========================= */
+
+@media(max-width:700px){
+
+/* اسم المريض */
+
+.patientName{
+
+font-size:22px !important;
+
+line-height:1.5;
+
+}
+
+/* النص الصغير */
+
+.patientSub{
+
+font-size:12px !important;
+
+}
+
+/* شارة الحالة */
+
+.statusBadge{
+
+font-size:14px !important;
+
+padding:10px 14px !important;
+
+}
+
+/* عنوان الصندوق */
+
+.infoLabel{
+
+font-size:11px !important;
+
+margin-bottom:6px !important;
+
+}
+
+/* قيمة الصندوق */
+
+.infoValue{
+
+font-size:15px !important;
+
+line-height:1.6 !important;
+
+word-break:break-word;
+
+}
+
+/* الملاحظات */
+
+.noteText{
+
+font-size:14px !important;
+
+line-height:1.9 !important;
+
+}
+
+/* عنوان الملاحظات */
+
+.noteTitle{
+
+font-size:14px !important;
+
+}
+
+/* الانبوت */
+
+.input{
+
+font-size:14px !important;
+
+}
+
+/* زر البحث */
+
+.searchBtn{
+
+font-size:15px !important;
+
+}
+
+/* العنوان الرئيسي */
+
+.title{
+
+font-size:24px !important;
+
+line-height:1.5;
+
+}
+
+/* الوصف */
+
+.subtitle{
+
+font-size:13px !important;
+
+line-height:1.9;
+
+}
+
+}
+</style>
+</head>
+<script>
+
+const themeBtn =
+document.getElementById("themeBtn");
+
+if(localStorage.getItem("theme") === "light"){
+
+document.body.classList.add("lightMode");
+
+themeBtn.innerHTML = "☀️";
+
+}
+
+themeBtn.onclick = () => {
+
+document.body.classList.toggle("lightMode");
+
+const isLight =
+document.body.classList.contains("lightMode");
+
+if(isLight){
+
+localStorage.setItem("theme","light");
+
+themeBtn.innerHTML = "☀️";
+
+document.body.style.background =
+"linear-gradient(135deg,#e2e8f0,#f8fafc)";
+
+document.body.style.color = "#0f172a";
+
+document.querySelectorAll(".portal").forEach(el=>{
+el.style.background = "rgba(255,255,255,.96)";
+el.style.color = "#0f172a";
+});
+
+document.querySelectorAll(".input").forEach(el=>{
+el.style.background = "#ffffff";
+el.style.color = "#0f172a";
+el.style.border = "1px solid #cbd5e1";
+});
+
+document.querySelectorAll(".infoBox").forEach(el=>{
+el.style.background = "#f8fafc";
+el.style.color = "#0f172a";
+});
+
+}else{
+
+localStorage.setItem("theme","dark");
+
+themeBtn.innerHTML = "🌙";
+
+location.reload();
+
+}
+
+};
+
+</script>
+
+</body>
+<body>
+ <button id="themeBtn">🌙</button>
+
+<div class="bgBlur1"></div>
+<div class="bgBlur2"></div>
+
+<div class="portal">
+
+<div class="logoWrap">
+🧪
+</div>
+
+<div class="title">
+بوابة النتائج الخاصة بمستشفى نفط البصرة</div>
+
+<div class="subtitle">
+يمكنك متابعة حالة التحليل بسهولة عبر كتابة الاسم الكامل للمريض والعمر .
+</div>
+
+<form id="searchForm" method="POST">
+
+<div class="searchCard">
+
+<div class="searchRow">
+
+<div style="display:flex;flex-direction:column;gap:14px;width:100%">
+
+<input
+class="input"
+name="query"
+placeholder="اكتب الاسم الكامل"
+required>
+
+<input
+class="input"
+name="age"
+placeholder="اكتب العمر"
+required>
+
+</div>
+
+<button
+class="searchBtn"
+type="submit">
+🔍 بحث
+</button>
+
+</div>
+
+</div>
+
+</form>
+
+
+{% if patient %}
+
+{% set display_status = patient.status %}
+{% set status_class = 'status-working' %}
+
+{% if 'تم استلام عينة التحليل' in patient.status %}
+    {% set display_status = '🧪 تم استلام عينة التحليل' %}
+    {% set status_class = 'status-sample' %}
+
+{% elif 'جار العمل' in patient.status %}
+    {% set display_status = '🧪 تم استلام عينة التحليل' %}
+    {% set status_class = 'status-sample' %}
+
+{% elif 'قيد العمل' in patient.status %}
+    {% set display_status = '⏳ قيد العمل' %}
+    {% set status_class = 'status-warning' %}
+
+{% elif 'متأخر' in patient.status %}
+    {% set display_status = '⏳ قيد العمل' %}
+    {% set status_class = 'status-warning' %}
+
+{% elif 'تنبيه' in patient.status %}
+    {% set display_status = '⏳ قيد العمل' %}
+    {% set status_class = 'status-warning' %}
+
+{% elif 'غير مكتمل' in patient.status %}
+    {% set display_status = '❌ غير مكتمل' %}
+    {% set status_class = 'status-danger' %}
+
+{% elif 'مكتمل' in patient.status %}
+    {% set display_status = '✅ مكتمل' %}
+    {% set status_class = 'status-done' %}
+
+{% endif %}
+
+<div class="resultCard">
+
+<div class="resultTop">
+
+<div class="patientInfo">
+
+<div class="avatar">
+{{ patient.name[0] }}
+</div>
+
+<div>
+
+<div class="patientName">
+{{ patient.name }}
+</div>
+
+<div class="patientSub">
+آخر تحديث لحالة التحليل
+</div>
+
+</div>
+
+</div>
+
+<div class="statusBadge {{ status_class }}">
+{{ display_status }}
+</div>
+
+</div>
+
+<div class="infoGrid">
+
+<div class="infoBox">
+<div class="infoLabel">📅 التاريخ</div>
+<div class="infoValue">{{ patient.date }}</div>
+</div>
+
+<div class="infoBox">
+<div class="infoLabel">🕒 وقت التسجيل</div>
+<div class="infoValue">{{ patient.time }}</div>
+</div>
+
+<div class="infoBox">
+<div class="infoLabel">🏥 القسم</div>
+<div class="infoValue">{{ patient.section }}</div>
+</div>
+
+<div class="infoBox">
+<div class="infoLabel">📌 الحالة الحالية</div>
+<div class="infoValue">{{ display_status }}</div>
+</div>
+
+</div>
+
+{% if patient.extra %}
+
+<div class="noteCard">
+
+<div class="noteTitle">
+📝 ملاحظات المختبر
+</div>
+
+<div class="noteText">
+{{ patient.extra | safe }}
+</div>
+
+</div>
+
+{% endif %}
+
+</div>
+
+{% elif request.method == 'POST' %}
+
+<div class="emptyBox">
+❌ لم يتم العثور على نتيجة بهذا الاسم
+</div>
+
+{% endif %}
+<div class="luxurySection">
+
+<div class="luxuryHeader">
+✨ نبذة تعريفية
+</div>
+
+<div class="luxuryGrid">
+
+<!-- المستشفى -->
+
+<div class="luxCard">
+
+<div class="luxGlow"></div>
+
+<div class="luxIcon">
+🏥
+</div>
+
+<div class="luxTitle">
+مستشفى نفط البصرة
+</div>
+
+<div class="luxText">
+يقدم المستشفى خدمات طبية متطورة بأحدث الأنظمة
+والتقنيات الحديثة لتوفير أفضل رعاية صحية للمرضى.
+</div>
+
+</div>
+
+<!-- المختبر -->
+
+<div class="luxCard">
+
+<div class="luxGlow"></div>
+
+<div class="luxIcon">
+🧪
+</div>
+
+<div class="luxTitle">
+مختبر التحليلات
+</div>
+
+<div class="luxText">
+مختبر ذكي يوفر متابعة دقيقة لحالة التحليل
+ابتداءً من استلام العينة وحتى اكتمال النتيجة.
+</div>
+
+</div>
+
+<!-- النظام -->
+
+<div class="luxCard">
+
+<div class="luxGlow"></div>
+
+<div class="luxIcon">
+💻
+</div>
+
+<div class="luxTitle">
+النظام الإلكتروني
+</div>
+
+<div class="luxText">
+بوابة إلكترونية حديثة تسمح للمريض
+بمتابعة حالة التحليل بشكل مباشر وآمن وسريع , حيث تم انشاء النظام مجانا خدمة لاهلنا بالبصرة الفيحاء .
+</div>
+
+</div>
+
+<!-- المبرمج -->
+
+<div class="luxCard programmerCard">
+
+<div class="luxGlow"></div>
+
+<div class="luxIcon">
+👨‍💻
+</div>
+
+<div class="luxTitle">
+المصمم والمبرمج
+</div>
+
+<div class="luxText">
+
+<b class="programmerName">
+تقني تحليلات مرضية / حيدر سعدون صالح
+</b>
+
+<br><br>
+أحد منتسبي شعبة المختبرات في مستشفى نفط البصرة .
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="footer">
+ برمجة وتصميم • تقني تحليلات مرضية حيدر سعدون صالح 
+</div>
+
+</div>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+<script>
+
+const socket = io();
+const searchBox =
+document.querySelector(
+'input[name="query"]'
+);
+
+const ageBox =
+document.querySelector(
+'input[name="age"]'
+);
+
+/* 🔥 استرجاع الاسم */
+
+if(localStorage.getItem("patientSearch")){
+
+searchBox.value =
+localStorage.getItem(
+"patientSearch"
+);
+
+}
+
+/* 🔥 استرجاع العمر */
+
+if(localStorage.getItem("patientAge")){
+
+ageBox.value =
+localStorage.getItem(
+"patientAge"
+);
+
+}
+
+/* 🔥 حفظ الاسم */
+
+searchBox.addEventListener("input", ()=>{
+
+localStorage.setItem(
+"patientSearch",
+searchBox.value
+);
+
+});
+
+/* 🔥 حفظ العمر */
+
+ageBox.addEventListener("input", ()=>{
+
+localStorage.setItem(
+"patientAge",
+ageBox.value
+);
+
+});
+
+socket.on("refresh", () => {
+
+/* تحديث بدون مسح الاسم */
+
+const form =
+document.getElementById("searchForm");
+
+if(form){
+
+form.requestSubmit();
+
+}
+
+});
+
+</script>
+<div id="assistantBtn">
+
+💬
+
+</div>
+
+<div id="assistantBox">
+
+<div class="assistantTitle">
+
+🤖 المساعد الذكي
+
+</div>
+
+<div class="assistantContent">
+
+يمكنك كتابة الاسم والعمر لمعرفة حالة التحليل.
+
+إذا كانت الحالة:
+<br><br>
+
+🧪 تم استلام العينة
+<br>
+
+⏳ قيد العمل
+<br>
+
+⚠️ متأخر
+<br>
+
+✅ مكتمل
+
+</div>
+
+</div>
+<script>
+
+document.getElementById("assistantBtn")
+
+.onclick = () => {
+
+const box = document.getElementById("assistantBox");
+
+box.style.display =
+
+box.style.display === "block"
+
+? "none"
+
+: "block";
+
+};
+
+</script>
+
+<script>
+
+window.addEventListener("DOMContentLoaded", () => {
+
+const themeBtn =
+document.getElementById("themeBtn");
+
+if(!themeBtn) return;
+
+/* الوضع المحفوظ */
+
+if(localStorage.getItem("theme") === "light"){
+
+applyLight();
+
+themeBtn.innerHTML = "☀️";
+
+}
+
+/* الضغط على الزر */
+
+themeBtn.onclick = () => {
+
+const isLight =
+themeBtn.innerHTML === "🌙";
+
+if(isLight){
+
+localStorage.setItem("theme","light");
+
+themeBtn.innerHTML = "☀️";
+
+applyLight();
+
+}else{
+
+localStorage.setItem("theme","dark");
+
+themeBtn.innerHTML = "🌙";
+
+location.reload();
+
+}
+
+};
+
+/* ☀️ الوضع النهاري */
+
+function applyLight(){
+
+document.body.style.background =
+"linear-gradient(135deg,#e2e8f0,#f8fafc)";
+
+document.body.style.color = "#0f172a";
+
+document.querySelectorAll(".portal").forEach(el=>{
+
+el.style.background =
+"rgba(255,255,255,.96)";
+
+el.style.color = "#0f172a";
+
+});
+
+document.querySelectorAll(".input").forEach(el=>{
+
+el.style.background = "#ffffff";
+
+el.style.color = "#0f172a";
+
+el.style.border =
+"1px solid #cbd5e1";
+
+});
+
+document.querySelectorAll(".infoBox").forEach(el=>{
+
+el.style.background = "#f8fafc";
+
+el.style.color = "#0f172a";
+
+});
+
+}
+
+});
+
+</script>
+</body>
+</html>

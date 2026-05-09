@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+إدارة المستخدمين
+</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+<style>
+
+:root{
+
+--bg1:#020617;
+--bg2:#0f172a;
+--card:#111c34;
+--glass:rgba(255,255,255,.05);
+--line:rgba(255,255,255,.08);
+--text:#f8fafc;
+--muted:#94a3b8;
+--green:#22c55e;
+--red:#ef4444;
+--blue:#3b82f6;
+--gold:#f59e0b;
+
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+
+font-family:'Cairo',sans-serif;
+
+background:
+radial-gradient(circle at top right,#1e3a8a22,transparent 25%),
+radial-gradient(circle at bottom left,#0ea5e922,transparent 25%),
+linear-gradient(135deg,#020617,#0f172a 60%,#111827);
+
+min-height:100vh;
+
+padding:40px 20px;
+
+color:var(--text);
+
+overflow-x:hidden;
+
+}
+
+.wrapper{
+
+max-width:1300px;
+
+margin:auto;
+
+}
+
+.topBar{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:20px;
+
+margin-bottom:30px;
+
+}
+
+.titleBox{
+
+background:var(--glass);
+
+border:1px solid var(--line);
+
+backdrop-filter:blur(18px);
+
+padding:24px 28px;
+
+border-radius:28px;
+
+box-shadow:
+0 20px 50px rgba(0,0,0,.35);
+
+}
+
+.mainTitle{
+
+font-size:38px;
+font-weight:900;
+
+}
+
+.subTitle{
+
+margin-top:8px;
+
+color:var(--muted);
+
+font-size:15px;
+
+}
+
+.backBtn{
+
+background:linear-gradient(135deg,#334155,#1e293b);
+
+color:white;
+
+border:none;
+
+padding:16px 22px;
+
+border-radius:18px;
+
+font-family:'Cairo';
+
+font-size:15px;
+font-weight:800;
+
+cursor:pointer;
+
+transition:.25s;
+
+box-shadow:0 10px 25px rgba(0,0,0,.25);
+
+}
+
+.backBtn:hover{
+
+transform:translateY(-3px);
+
+}
+
+.stats{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+
+gap:18px;
+
+margin-bottom:28px;
+
+}
+
+.statCard{
+
+background:var(--glass);
+
+border:1px solid var(--line);
+
+border-radius:24px;
+
+padding:22px;
+
+backdrop-filter:blur(18px);
+
+box-shadow:0 20px 40px rgba(0,0,0,.25);
+
+}
+
+.statTitle{
+
+color:var(--muted);
+font-size:14px;
+
+}
+
+.statValue{
+
+margin-top:8px;
+
+font-size:34px;
+font-weight:900;
+
+}
+
+.usersGrid{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(350px,1fr));
+
+gap:22px;
+
+}
+
+.userCard{
+
+position:relative;
+
+overflow:hidden;
+
+background:
+linear-gradient(145deg,
+rgba(255,255,255,.06),
+rgba(255,255,255,.03));
+
+border:1px solid rgba(255,255,255,.08);
+
+border-radius:30px;
+
+padding:24px;
+
+backdrop-filter:blur(18px);
+
+transition:.3s;
+
+box-shadow:
+0 20px 50px rgba(0,0,0,.28);
+
+}
+
+.userCard:hover{
+
+transform:translateY(-6px);
+
+border-color:rgba(59,130,246,.4);
+
+}
+
+.userCard::before{
+
+content:'';
+
+position:absolute;
+
+top:-80px;
+left:-80px;
+
+width:180px;
+height:180px;
+
+background:
+radial-gradient(circle,
+rgba(59,130,246,.18),
+transparent 70%);
+
+}
+
+.userBlocked{
+
+border:1px solid rgba(239,68,68,.35);
+
+background:
+linear-gradient(145deg,
+rgba(239,68,68,.12),
+rgba(255,255,255,.03));
+
+}
+
+.userHeader{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+margin-bottom:18px;
+
+}
+
+.avatar{
+
+width:62px;
+height:62px;
+
+border-radius:20px;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+font-size:28px;
+
+background:
+linear-gradient(135deg,#2563eb,#0ea5e9);
+
+box-shadow:
+0 10px 30px rgba(37,99,235,.35);
+
+}
+
+.badge{
+
+padding:8px 14px;
+
+border-radius:999px;
+
+font-size:13px;
+font-weight:800;
+
+}
+
+.activeBadge{
+
+background:rgba(34,197,94,.18);
+color:#4ade80;
+
+}
+
+.blockedBadge{
+
+background:rgba(239,68,68,.18);
+color:#f87171;
+
+}
+
+.userName{
+
+font-size:28px;
+font-weight:900;
+
+margin-bottom:14px;
+
+}
+
+.meta{
+
+display:flex;
+flex-direction:column;
+gap:10px;
+
+margin-bottom:24px;
+
+}
+
+.metaItem{
+
+background:rgba(255,255,255,.04);
+
+padding:12px 16px;
+
+border-radius:16px;
+
+color:#cbd5e1;
+
+font-size:15px;
+
+}
+
+.actions{
+
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+
+}
+
+button,
+select{
+
+height:48px;
+
+border:none;
+
+border-radius:16px;
+
+font-family:'Cairo';
+font-weight:800;
+
+padding:0 18px;
+
+cursor:pointer;
+
+transition:.25s;
+
+}
+
+button:hover{
+
+transform:scale(1.04);
+
+}
+
+.green{
+
+background:linear-gradient(135deg,#16a34a,#22c55e);
+
+color:white;
+
+}
+
+.red{
+
+background:linear-gradient(135deg,#dc2626,#ef4444);
+
+color:white;
+
+}
+
+.blue{
+
+background:linear-gradient(135deg,#2563eb,#3b82f6);
+
+color:white;
+
+}
+
+select{
+
+background:#0f172a;
+
+color:white;
+
+min-width:100px;
+
+border:1px solid rgba(255,255,255,.08);
+
+}
+
+select option{
+
+background:#0f172a;
+
+}
+
+.empty{
+
+text-align:center;
+
+padding:80px 20px;
+
+font-size:20px;
+
+color:#94a3b8;
+
+}
+
+@media(max-width:700px){
+
+.mainTitle{
+font-size:28px;
+}
+
+.userName{
+font-size:22px;
+}
+
+.usersGrid{
+grid-template-columns:1fr;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="wrapper">
+
+<div class="topBar">
+
+<div class="titleBox">
+
+<div class="mainTitle">
+👥 إدارة المستخدمين
+</div>
+
+<div class="subTitle">
+لوحة احترافية لإدارة حسابات النظام والصلاحيات
+</div>
+
+</div>
+
+<button
+class="backBtn"
+onclick="window.location='/dashboard'">
+⬅ العودة للوحة التحكم
+</button>
+
+</div>
+
+<div class="stats">
+
+<div class="statCard">
+
+<div class="statTitle">
+الحسابات المحظورة
+</div>
+
+<div class="statValue" id="blockedUsers">
+0
+</div>
+
+</div>
+
+</div>
+
+<!-- 🔥 الطلبات -->
+
+<div class="usersGrid" style="margin-bottom:28px;">
+
+<!-- 📨 طلبات تغيير الاسم -->
+
+<div class="titleBox">
+
+<div class="mainTitle" style="font-size:28px;">
+📨 طلبات تغيير اسم المستخدم
+</div>
+
+<div class="subTitle">
+طلبات المستخدمين بانتظار موافقة الإدارة
+</div>
+
+<div
+id="usernameRequests"
+style="
+margin-top:22px;
+display:flex;
+flex-direction:column;
+gap:18px;
+min-height:220px;
+">
+
+<div class="empty">
+لا توجد طلبات حالياً
+</div>
+
+</div>
+
+</div>
+
+<!-- 🔑 طلبات كلمة المرور -->
+
+<div class="titleBox">
+
+<div class="mainTitle" style="font-size:28px;">
+🔑 طلبات تغيير كلمة المرور
+</div>
+
+<div class="subTitle">
+طلبات تغيير كلمات المرور بانتظار موافقة الإدارة
+</div>
+
+<div
+id="passwordRequests"
+style="
+margin-top:22px;
+display:flex;
+flex-direction:column;
+gap:18px;
+min-height:220px;
+">
+
+<div class="empty">
+لا توجد طلبات حالياً
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- 👥 المستخدمين -->
+
+<div
+class="usersGrid"
+id="users">
+
+<div class="empty">
+جاري تحميل المستخدمين...
+</div>
+
+</div>
+
+<script>
+
+async function loadUsers(){
+
+const res = await fetch('/all_users');
+
+const users = await res.json();
+
+const box = document.getElementById('users');
+
+const total = document.getElementById('totalUsers');
+const active = document.getElementById('activeUsers');
+const blocked = document.getElementById('blockedUsers');
+
+box.innerHTML = '';
+
+let activeCount = 0;
+let blockedCount = 0;
+
+users.forEach(user=>{
+
+if(user.blocked){
+blockedCount++;
+}else{
+activeCount++;
+}
+
+box.innerHTML += `
+
+<div class="userCard ${user.blocked ? 'userBlocked' : ''}">
+
+<div class="userHeader">
+
+<div class="avatar">
+👤
+</div>
+
+<div class="badge ${user.blocked ? 'blockedBadge' : 'activeBadge'}">
+${user.blocked ? 'محظور' : 'نشط'}
+</div>
+
+</div>
+
+<div class="userName">
+${user.username}
+</div>
+
+<div class="meta">
+
+<div class="metaItem">
+🔐 الصلاحية: ${user.role}
+</div>
+
+<div class="metaItem">
+🟢 الحالة: ${user.blocked ? 'الحساب معطل' : 'الحساب يعمل بشكل طبيعي'}
+</div>
+
+</div>
+
+<div class="actions">
+
+${
+!user.approved
+?
+`
+<select id="role_${user.username}">
+<option value="x2">x2</option>
+<option value="view">view</option>
+<option value="x1">x1</option>
+</select>
+
+<button class="green" onclick="approveUser('${user.username}')">
+موافقة
+</button>
+
+<button class="red" onclick="rejectUser('${user.username}')">
+رفض
+</button>
+`
+:
+`
+<button class="red" onclick="blockUser('${user.username}')">
+حظر
+</button>
+
+<button class="blue" onclick="unblockUser('${user.username}')">
+فك الحظر
+</button>
+
+<button class="red" onclick="deleteUser('${user.username}')">
+حذف
+</button>
+<select
+id="changeRole_${user.username}"
+>
+
+<option value="x1">
+x1
+</option>
+
+<option value="x2">
+x2
+</option>
+
+<option value="view">
+view
+</option>
+
+</select>
+
+<button
+class="green"
+onclick="
+changeRole(
+'${user.username}'
+)
+">
+
+تحديث الصلاحية
+
+</button>
+`
+}
+
+</div>
+
+</div>
+
+`;
+
+});
+
+if(total){
+total.innerText = users.length;
+}
+
+if(active){
+active.innerText = activeCount;
+}
+
+if(blocked){
+blocked.innerText = blockedCount;
+}
+
+}
+
+async function approveUser(username){
+
+try{
+
+const role =
+document.getElementById(
+`role_${username}`
+).value;
+
+const data =
+new URLSearchParams({
+
+username,
+role
+
+});
+
+const res =
+await fetch(
+'/approve_user',
+{
+method:'POST',
+
+headers:{
+'Content-Type':
+'application/x-www-form-urlencoded'
+},
+
+body:data.toString()
+}
+);
+
+const text =
+await res.text();
+
+if(text === "OK"){
+
+showToast(
+"تمت الموافقة على المستخدم",
+"success"
+);
+
+loadUsers();
+
+}else{
+
+showToast(
+text || "فشل الموافقة",
+"error"
+);
+
+}
+
+}catch(err){
+
+console.log(err);
+
+showToast(
+"حدث خطأ أثناء الموافقة",
+"error"
+);
+
+}
+
+}
+
+async function rejectUser(username){
+
+const data = new URLSearchParams({
+username
+});
+
+await fetch('/reject_user',{
+method:'POST',
+body:data
+});
+
+loadUsers();
+
+}
+
+async function blockUser(username){
+
+const data = new URLSearchParams({
+username
+});
+
+await fetch('/block_user',{
+method:'POST',
+body:data
+});
+
+loadUsers();
+
+}
+
+async function changeRole(username){
+
+const role =
+document.getElementById(
+`changeRole_${username}`
+).value;
+
+const data =
+new URLSearchParams({
+
+username,
+role
+
+});
+
+const res = await fetch(
+"/change_role",
+{
+method:"POST",
+body:data
+}
+);
+
+const text =
+await res.text();
+
+if(text === "OK"){
+
+showToast(
+"تم تحديث الصلاحية",
+"success"
+);
+
+}else{
+
+showToast(
+text,
+"error"
+);
+
+}
+
+loadUsers();
+
+}
+
+async function unblockUser(username){
+
+const data = new URLSearchParams({
+username
+});
+
+await fetch('/unblock_user',{
+method:'POST',
+body:data
+});
+
+loadUsers();
+
+}
+
+async function deleteUser(username){
+
+if(!confirm('هل أنت متأكد من حذف المستخدم؟')){
+return;
+}
+
+const data = new URLSearchParams({
+username
+});
+
+await fetch('/delete_user',{
+method:'POST',
+body:data
+});
+
+loadUsers();
+
+}
+
+loadUsers();
+function showToast(message,type="success"){
+
+const toast =
+document.getElementById("toast");
+
+toast.innerText = message;
+
+toast.style.display = "block";
+
+if(type === "error"){
+
+toast.style.background =
+"#dc2626";
+
+}else{
+
+toast.style.background =
+"#16a34a";
+
+}
+
+setTimeout(()=>{
+
+toast.style.display = "none";
+
+},2000);
+
+}
+async function loadUsernameRequests(){
+
+const container =
+document.getElementById(
+"usernameRequests"
+);
+
+if(!container) return;
+
+const res =
+await fetch(
+"/username_requests"
+);
+
+const requests =
+await res.json();
+
+if(requests.length === 0){
+
+container.innerHTML = `
+
+<div class="emptyState">
+
+لا توجد طلبات تغيير اسم حالياً
+
+</div>
+
+`;
+
+return;
+
+}
+
+container.innerHTML = "";
+
+requests.forEach(r => {
+
+container.innerHTML += `
+
+<div class="userCard">
+
+<div>
+
+<div style="
+font-weight:800;
+font-size:18px;
+">
+
+👤 ${r.username}
+
+</div>
+
+<div style="
+margin-top:8px;
+opacity:.8;
+">
+
+يريد تغيير الاسم إلى:
+
+<b>
+${r.new_username}
+</b>
+
+</div>
+
+</div>
+
+<div class="userActions">
+
+<button
+class="userBtn greenBtn"
+onclick="
+approveUsernameRequest(${r.id})
+">
+
+موافقة
+
+</button>
+
+<button
+class="userBtn redBtn"
+onclick="
+rejectUsernameRequest(${r.id})
+">
+
+رفض
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+async function approveUsernameRequest(id){
+
+await fetch(
+"/approve_username_request",
+{
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/x-www-form-urlencoded"
+},
+
+body:new URLSearchParams({
+id
+}).toString()
+}
+);
+
+showToast(
+"تمت الموافقة على الطلب",
+"success"
+);
+
+loadUsernameRequests();
+
+}
+
+async function rejectUsernameRequest(id){
+
+await fetch(
+"/reject_username_request",
+{
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/x-www-form-urlencoded"
+},
+
+body:new URLSearchParams({
+id
+}).toString()
+}
+);
+
+showToast(
+"تم رفض الطلب",
+"warn"
+);
+
+loadUsernameRequests();
+
+}
+
+loadUsernameRequests();
+async function loadPasswordRequests(){
+
+const container =
+document.getElementById(
+"passwordRequests"
+);
+
+if(!container) return;
+
+const res =
+await fetch(
+"/password_requests"
+);
+
+const requests =
+await res.json();
+
+if(requests.length === 0){
+
+container.innerHTML = `
+
+<div class="empty">
+
+لا توجد طلبات تغيير كلمة مرور
+
+</div>
+
+`;
+
+return;
+
+}
+
+container.innerHTML = "";
+
+requests.forEach(r => {
+
+container.innerHTML += `
+
+<div class="userCard">
+
+<div>
+
+<div style="
+font-size:20px;
+font-weight:900;
+">
+
+🔑 ${r.username}
+
+</div>
+
+<div style="
+margin-top:10px;
+opacity:.8;
+">
+
+يريد تغيير كلمة المرور
+
+</div>
+
+</div>
+
+<div class="actions">
+
+<button
+class="green"
+onclick="
+approvePasswordRequest(${r.id})
+">
+
+موافقة
+
+</button>
+
+<button
+class="red"
+onclick="
+rejectPasswordRequest(${r.id})
+">
+
+رفض
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+async function approvePasswordRequest(id){
+
+await fetch(
+"/approve_password_request",
+{
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/x-www-form-urlencoded"
+},
+
+body:new URLSearchParams({
+id
+}).toString()
+}
+);
+
+showToast(
+"تم تغيير كلمة المرور",
+"success"
+);
+
+loadPasswordRequests();
+
+}
+
+async function rejectPasswordRequest(id){
+
+await fetch(
+"/reject_password_request",
+{
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/x-www-form-urlencoded"
+},
+
+body:new URLSearchParams({
+id
+}).toString()
+}
+);
+
+showToast(
+"تم رفض الطلب",
+"error"
+);
+
+loadPasswordRequests();
+
+}
+
+loadPasswordRequests();
+const socket = io();
+
+socket.on(
+"admin_notification",
+(data)=>{
+
+showToast(
+data.message,
+"success"
+);
+
+loadUsers();
+
+loadUsernameRequests();
+
+loadPasswordRequests();
+
+}
+);
+</script>
+<div id="toast" style="
+position:fixed;
+bottom:25px;
+left:50%;
+transform:translateX(-50%);
+background:#16a34a;
+color:white;
+padding:14px 22px;
+border-radius:14px;
+font-family:'Cairo';
+font-weight:800;
+display:none;
+z-index:9999;
+box-shadow:0 10px 25px rgba(0,0,0,.3);
+">
+تم
+</div>
+</body>
+
+</html>

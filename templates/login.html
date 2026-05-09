@@ -1,0 +1,2047 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نظام التحليلات - دخول</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+    /* ===== الكابتشا ===== */
+
+.captchaBox{
+
+margin-top:18px;
+
+display:flex;
+
+flex-direction:column;
+
+gap:12px;
+
+}
+
+.captchaTop{
+
+display:flex;
+
+align-items:center;
+
+gap:10px;
+
+}
+.captchaText{
+
+flex:1;
+
+height:62px;
+
+border-radius:22px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:32px;
+
+font-weight:900;
+
+letter-spacing:8px;
+
+font-family:monospace;
+
+color:white;
+
+user-select:none;
+
+overflow:hidden;
+
+background:
+linear-gradient(
+135deg,
+#0f172a,
+#111827
+);
+
+border:
+1px solid rgba(255,255,255,.08);
+
+box-shadow:
+0 0 25px rgba(0,0,0,.35);
+
+text-shadow:
+0 0 12px rgba(0,153,255,.45);
+
+}
+
+/* تحسين الموبايل */
+
+@media (max-width:520px){
+
+.captchaText{
+
+height:54px;
+
+font-size:26px;
+
+letter-spacing:6px;
+
+border-radius:18px;
+
+}
+
+}
+
+.refreshCaptcha{
+
+width:62px;
+
+min-width:62px;
+
+height:62px;
+
+border:none;
+
+border-radius:20px;
+
+cursor:pointer;
+
+font-size:24px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+color:white;
+
+background:
+linear-gradient(
+135deg,
+#0099ff,
+#0055ff
+);
+
+box-shadow:
+0 10px 25px rgba(0,153,255,.28);
+
+transition:
+transform .25s,
+box-shadow .25s;
+
+}
+
+.refreshCaptcha:hover{
+
+transform:rotate(90deg);
+
+box-shadow:
+0 14px 30px rgba(0,153,255,.40);
+
+}
+
+.refreshCaptcha:active{
+
+transform:scale(.92);
+
+}
+
+/* تحسين الموبايل */
+
+@media (max-width:520px){
+
+.refreshCaptcha{
+
+width:54px;
+
+min-width:54px;
+
+height:54px;
+
+font-size:21px;
+
+border-radius:18px;
+
+}
+
+}
+
+
+.captchaInput{
+
+height:56px;
+
+border:none;
+
+outline:none;
+
+border-radius:18px;
+
+padding:0 18px;
+
+font-size:16px;
+
+background:
+rgba(255,255,255,.05);
+
+color:white;
+
+border:
+1px solid rgba(255,255,255,.08);
+
+}
+
+.captchaInput:focus{
+
+border-color:#0099ff;
+
+box-shadow:
+0 0 18px rgba(0,153,255,.25);
+
+}
+
+    /* ===== الخلفية ===== */
+
+.policyModal{
+
+position:fixed;
+
+inset:0;
+
+background:rgba(0,0,0,.75);
+
+backdrop-filter:blur(10px);
+
+display:none;
+
+justify-content:center;
+
+align-items:center;
+
+z-index:99999;
+
+padding:20px;
+
+animation:fadeIn .25s ease;
+
+}
+
+/* ===== الصندوق ===== */
+
+.policyBox{
+
+width:min(620px,95%);
+
+background:linear-gradient(
+145deg,
+#0f172a,
+#111827
+);
+
+border:1px solid rgba(255,255,255,.08);
+
+border-radius:30px;
+
+padding:28px;
+
+box-shadow:
+0 0 50px rgba(0,0,0,.6),
+0 0 20px rgba(0,153,255,.15);
+
+max-height:85vh;
+
+overflow:auto;
+
+color:white;
+
+}
+
+/* ===== الهيدر ===== */
+
+.policyHeader{
+
+display:flex;
+
+align-items:center;
+
+gap:16px;
+
+margin-bottom:24px;
+
+}
+
+.policyIcon{
+
+width:65px;
+
+height:65px;
+
+border-radius:20px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:30px;
+
+background:linear-gradient(
+135deg,
+#00bfff,
+#0066ff
+);
+
+box-shadow:0 0 20px rgba(0,140,255,.5);
+
+}
+
+.policyHeader h2{
+
+margin:0;
+
+font-size:28px;
+
+font-weight:800;
+
+}
+
+.policyHeader span{
+
+color:#9ca3af;
+
+font-size:14px;
+
+}
+
+/* ===== المحتوى ===== */
+
+.policyContent{
+
+display:flex;
+
+flex-direction:column;
+
+gap:16px;
+
+}
+
+/* ===== كل عنصر ===== */
+
+.policyItem{
+
+background:rgba(255,255,255,.04);
+
+border:1px solid rgba(255,255,255,.06);
+
+padding:18px;
+
+border-radius:20px;
+
+transition:.25s;
+
+}
+
+.policyItem:hover{
+
+transform:translateY(-2px);
+
+background:rgba(255,255,255,.06);
+
+}
+
+/* ===== العنوان ===== */
+
+.policyItem h3{
+
+margin:0 0 8px;
+
+font-size:18px;
+
+color:#4cc9ff;
+
+}
+
+/* ===== النص ===== */
+
+.policyItem p{
+
+margin:0;
+
+line-height:1.9;
+
+color:#d1d5db;
+
+font-size:15px;
+
+}
+
+/* ===== الأزرار ===== */
+
+.policyActions{
+
+margin-top:24px;
+
+}
+
+.policyCloseBtn{
+
+width:100%;
+
+padding:15px;
+
+border:none;
+
+border-radius:18px;
+
+background:linear-gradient(
+135deg,
+#0099ff,
+#0055ff
+);
+
+color:white;
+
+font-size:16px;
+
+font-weight:700;
+
+cursor:pointer;
+
+transition:.25s;
+
+}
+
+.policyCloseBtn:hover{
+
+transform:scale(1.02);
+
+}
+
+/* ===== انيميشن ===== */
+
+@keyframes fadeIn{
+
+from{
+
+opacity:0;
+
+transform:scale(.96);
+
+}
+
+to{
+
+opacity:1;
+
+transform:scale(1);
+
+}
+
+}
+
+:root{
+  --bg1:#020617;
+  --bg2:#0f172a;
+  --card:rgba(15,23,42,0.62);
+  --card-border:rgba(255,255,255,0.12);
+  --text:#f8fafc;
+  --muted:#94a3b8;
+  --primary:#3b82f6;
+  --primary-2:#2563eb;
+  --green:#22c55e;
+  --green-2:#16a34a;
+  --red:#ef4444;
+  --amber:#f59e0b;
+  --shadow:0 30px 80px rgba(0,0,0,.45);
+  --radius:28px;
+}
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  width:100%;
+  /* تم تعديل overflow ليسمح بالتمرير عند الحاجة */
+  min-height: 100%;
+  font-family:'Cairo',sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(59,130,246,.18), transparent 26%),
+    radial-gradient(circle at top right, rgba(34,197,94,.12), transparent 26%),
+    radial-gradient(circle at bottom, rgba(245,158,11,.10), transparent 22%),
+    linear-gradient(135deg, var(--bg1), var(--bg2));
+}
+
+body{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  padding: 20px 0; /* مسافة أمان للتمرير */
+  overflow-x: hidden;
+  overflow-y: auto; 
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity:.18;
+  mask-image: radial-gradient(circle at center, black 36%, transparent 80%);
+  pointer-events:none;
+}
+
+.orb{
+  position:fixed;
+  border-radius:50%;
+  filter:blur(8px);
+  opacity:.65;
+  pointer-events:none;
+  animation: float 12s ease-in-out infinite;
+  z-index: 0;
+}
+.orb.one{
+  width:280px;height:280px;left:-80px;top:-70px;
+  background:radial-gradient(circle, rgba(59,130,246,.42), transparent 65%);
+}
+.orb.two{
+  width:240px;height:240px;right:-70px;bottom:-60px;
+  background:radial-gradient(circle, rgba(34,197,94,.34), transparent 65%);
+  animation-duration:15s;
+}
+.orb.three{
+  width:180px;height:180px;right:18%;top:10%;
+  background:radial-gradient(circle, rgba(245,158,11,.22), transparent 65%);
+  animation-duration:18s;
+}
+
+@keyframes float{
+  0%,100%{transform:translateY(0px) translateX(0px) scale(1)}
+  25%{transform:translateY(18px) translateX(10px) scale(1.04)}
+  50%{transform:translateY(-10px) translateX(-8px) scale(.98)}
+  75%{transform:translateY(14px) translateX(6px) scale(1.03)}
+}
+
+.shell{
+  position:relative;
+  z-index:2;
+  width:min(1080px, calc(100vw - 28px));
+  min-height:620px;
+  display:grid;
+  grid-template-columns: 1.12fr .88fr;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:32px;
+  overflow:hidden;
+  background:rgba(2,6,23,.38);
+  backdrop-filter: blur(24px);
+  box-shadow: var(--shadow);
+  animation: shellEnter .9s ease both;
+}
+
+@keyframes shellEnter{
+  from{opacity:0; transform:translateY(20px) scale(.98)}
+  to{opacity:1; transform:translateY(0) scale(1)}
+}
+
+.brand{
+  background-image:
+
+url('/static/lab-bg.png');
+
+background-size:cover;
+
+background-position:center;
+
+background-blend-mode:overlay;
+  padding:44px 42px;
+  background:
+    linear-gradient(145deg, rgba(15,23,42,.82), rgba(2,6,23,.52)),
+    radial-gradient(circle at top right, rgba(59,130,246,.12), transparent 38%);
+  position:relative;
+  overflow:hidden;
+}
+
+.brand::after{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  background:linear-gradient(120deg, transparent, rgba(255,255,255,.10), transparent);
+  transform:translateX(-120%);
+  animation: sheen 8s linear infinite;
+  pointer-events:none;
+}
+
+@keyframes sheen{
+  0%{transform:translateX(-120%)}
+  45%{transform:translateX(120%)}
+  100%{transform:translateX(120%)}
+}
+
+.logoWrap{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  margin-bottom:26px;
+}
+
+.logo{
+  width:62px;
+  height:62px;
+  border-radius:18px;
+  display:grid;
+  place-items:center;
+  font-size:28px;
+  background:linear-gradient(135deg, rgba(59,130,246,.95), rgba(34,197,94,.90));
+  box-shadow:0 16px 30px rgba(59,130,246,.28);
+}
+
+.brand h1{
+  margin:0;
+  font-size:40px;
+  line-height:1.25;
+  font-weight:800;
+  letter-spacing:.2px;
+}
+
+.brand p{
+  margin:16px 0 0;
+  color:var(--muted);
+  font-size:17px;
+  line-height:1.95;
+  max-width:560px;
+}
+
+.features{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap:16px;
+  margin-top:34px;
+}
+
+.feature{
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:22px;
+  background:rgba(15,23,42,.48);
+  padding:18px 18px 16px;
+}
+
+.feature .k{
+  font-size:13px;
+  color:#cbd5e1;
+  margin-bottom:8px;
+}
+
+.feature .v{
+  font-size:18px;
+  font-weight:700;
+  line-height:1.5;
+}
+
+.noteBox{
+  margin-top:28px;
+  border-radius:24px;
+  padding:18px 20px;
+  border:1px solid rgba(255,255,255,.10);
+  background:linear-gradient(135deg, rgba(59,130,246,.14), rgba(34,197,94,.10));
+}
+
+.noteBox b{
+  display:block;
+  margin-bottom:6px;
+}
+
+.noteBox span{
+  color:#dbeafe;
+  line-height:1.9;
+}
+
+.loginSide{
+  padding:34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:
+    linear-gradient(180deg, rgba(15,23,42,.86), rgba(2,6,23,.62));
+}
+
+.card{
+  width:100%;
+  max-width:420px;
+  border-radius:28px;
+  background:rgba(15,23,42,.76);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 24px 60px rgba(0,0,0,.34);
+  padding:30px;
+  position:relative;
+  overflow:hidden;
+}
+
+.cardHead{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:22px;
+}
+
+.cardHead h2{
+  margin:0;
+  font-size:30px;
+  line-height:1.2;
+  font-weight:800;
+}
+
+.cardHead p{
+  margin:8px 0 0;
+  color:var(--muted);
+  line-height:1.8;
+  font-size:15px;
+}
+
+.badge{
+  white-space:nowrap;
+  padding:10px 14px;
+  border-radius:999px;
+  font-size:13px;
+  background:rgba(34,197,94,.14);
+  color:#bbf7d0;
+  border:1px solid rgba(34,197,94,.30);
+}
+
+.field{
+  position:relative;
+  margin-top:16px;
+}
+
+.field label{
+  display:block;
+  margin:0 0 8px;
+  font-size:14px;
+  color:#cbd5e1;
+  font-weight:600;
+}
+
+.field input{
+  width:100%;
+  height:56px;
+  padding:0 48px 0 16px; /* تعديل المسافات لتناسب الأيقونات في الـ RTL */
+  border-radius:18px;
+  border:1px solid rgba(148,163,184,.24);
+  outline:none;
+  background:rgba(2,6,23,.78);
+  color:var(--text);
+  font-size:15px;
+  transition:.25s ease;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
+}
+
+.field input:focus{
+  border-color:rgba(59,130,246,.75);
+  box-shadow:0 0 0 5px rgba(59,130,246,.15);
+  transform:translateY(-1px);
+}
+
+.icon{
+  position:absolute;
+  right:14px; /* الأيقونة على اليمين */
+  top:50%;
+  transform:translateY(2px);
+  font-size:18px;
+  color:#93c5fd;
+  pointer-events:none;
+}
+
+.passToggle{
+  position:absolute;
+  left:12px; /* زر العين على اليسار */
+  top:50%;
+  transform:translateY(2px);
+  width:34px;
+  height:34px;
+  border:none;
+  border-radius:10px;
+  background:transparent;
+  color:#93c5fd;
+  cursor:pointer;
+  font-size:18px;
+  z-index: 5;
+}
+
+.passToggle:hover{
+  background:rgba(59,130,246,.10);
+}
+
+.actions{
+  margin-top:20px;
+}
+
+.submit{
+  width:100%;
+  height:58px;
+  border:none;
+  border-radius:18px;
+  cursor:pointer;
+  color:white;
+  font-size:17px;
+  font-weight:800;
+  letter-spacing:.2px;
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(135deg, var(--green), var(--green-2));
+  box-shadow:0 18px 34px rgba(34,197,94,.28);
+  transition:.24s ease;
+}
+
+
+.submit:hover{
+  transform:translateY(-2px);
+  box-shadow:0 22px 42px rgba(34,197,94,.36);
+}
+
+.submit:active{
+  transform:translateY(0);
+}
+
+.submit.loading{
+  opacity:.84;
+  pointer-events:none;
+}
+
+.submit.loading .txt{
+  visibility:hidden;
+}
+
+.submit.loading::after{
+  content:"";
+  position:absolute;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  border:3px solid rgba(255,255,255,.9);
+  border-top-color:transparent;
+  right:calc(50% - 10px);
+  top:50%;
+  transform:translateY(-50%);
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  to{transform:translateY(-50%) rotate(360deg)}
+}
+
+.helper{
+  margin-top:14px;
+  color:#94a3b8;
+  font-size:13px;
+  line-height:1.7;
+  text-align:center;
+}
+
+.serverError{
+  margin-top:14px;
+  padding:13px 14px;
+  border-radius:16px;
+  border:1px solid rgba(239,68,68,.25);
+  background:rgba(239,68,68,.10);
+  color:#fecaca;
+  display:none; /* مخفي افتراضياً */
+  line-height:1.8;
+  font-size:14px;
+  text-align:center;
+}
+
+.toast{
+  position:fixed;
+  bottom:22px;
+  left:50%;
+  transform:translateX(-50%);
+  min-width:260px;
+  max-width:min(560px, calc(100vw - 24px));
+  padding:18px 24px;
+  border-radius:16px;
+  display:none;
+  font-weight:700;
+  font-size:16px;
+  line-height:2;
+  text-align:center;
+  z-index:10000;
+  box-shadow:0 18px 50px rgba(0,0,0,.35);
+}
+
+.toast.success{ background:linear-gradient(135deg, #22c55e, #16a34a); color:white; }
+.toast.error{ background:linear-gradient(135deg, #ef4444, #dc2626); color:white; }
+
+.footer{
+  width:100%;
+  text-align:center;
+  color:#94a3b8;
+  font-size:13px;
+  padding: 20px 0;
+  z-index: 2;
+}
+#liveClock{
+
+margin-top:18px;
+
+text-align:center;
+
+color:#93c5fd;
+
+font-size:15px;
+
+font-weight:700;
+
+}
+.shimmerLine{
+  position:absolute;
+  inset:auto -30% 18px -30%;
+  height:1px;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.2), transparent);
+  opacity:.65;
+  animation: lineMove 5s linear infinite;
+}
+
+@keyframes lineMove{
+  from{transform:translateX(-25%)}
+  to{transform:translateX(25%)}
+}
+
+@media (max-width: 980px){
+  .shell{
+    grid-template-columns:1fr;
+    min-height:auto;
+  }
+  .brand{ padding:30px 22px; }
+  .loginSide{ padding:22px; }
+  .brand h1{ font-size:32px; }
+  .features{ grid-template-columns:1fr; }
+}
+
+@media (max-width: 520px){
+  .shell{ width:calc(100vw - 14px); border-radius:24px; }
+  .card{ padding:22px 18px; }
+  .brand{ padding:24px 18px; }
+  .brand h1{ font-size:28px; }
+}
+.createAccountBtn{
+
+width:100%;
+
+height:56px;
+
+margin-top:14px;
+
+border:none;
+
+border-radius:18px;
+
+cursor:pointer;
+
+font-family:'Cairo';
+
+font-size:15px;
+
+font-weight:800;
+
+color:white;
+
+background:
+linear-gradient(135deg,#3b82f6,#2563eb);
+
+box-shadow:
+0 18px 34px rgba(37,99,235,.28);
+
+transition:.25s;
+
+}
+
+.createAccountBtn:hover{
+
+transform:translateY(-2px);
+
+}
+
+.warningBox{
+  #captchaQuestion{
+
+font-size:18px;
+
+font-weight:800;
+
+color:#93c5fd;
+
+text-align:center;
+
+padding:10px;
+
+border-radius:14px;
+
+background:
+rgba(59,130,246,.08);
+
+border:
+1px solid rgba(59,130,246,.18);
+
+margin-bottom:8px;
+
+}
+
+margin-top:16px;
+
+padding:14px;
+
+border-radius:18px;
+
+background:
+rgba(239,68,68,.10);
+
+border:
+1px solid rgba(239,68,68,.25);
+
+color:#fecaca;
+
+font-size:14px;
+
+font-weight:700;
+
+line-height:2;
+
+text-align:center;
+
+}
+
+.modalBackdrop{
+
+position:fixed;
+
+inset:0;
+
+background:
+rgba(0,0,0,.75);
+
+display:none;
+
+align-items:center;
+
+justify-content:center;
+
+z-index:9999;
+
+padding:18px;
+
+}
+
+.modal{
+
+width:100%;
+
+max-width:460px;
+
+max-height:90vh;
+
+overflow-y:auto;
+
+direction:ltr;
+
+background:
+linear-gradient(
+180deg,
+rgba(15,23,42,.96),
+rgba(2,6,23,.94)
+);
+
+border-radius:30px;
+
+padding:22px;
+
+border:
+1px solid rgba(255,255,255,.08);
+
+box-shadow:
+0 30px 80px rgba(0,0,0,.45);
+
+animation:fadeModal .25s ease;
+
+}
+.modal *{
+
+direction:rtl;
+
+}
+.modal::-webkit-scrollbar{
+
+width:8px;
+
+}
+
+.modal::-webkit-scrollbar-thumb{
+
+background:#3b82f6;
+
+border-radius:20px;
+
+}
+@keyframes fadeModal{
+
+from{
+
+opacity:0;
+
+transform:scale(.95);
+
+}
+
+to{
+
+opacity:1;
+
+transform:scale(1);
+
+}
+
+}
+
+.modalTitle{
+
+font-size:28px;
+
+font-weight:800;
+
+margin-bottom:22px;
+
+text-align:center;
+
+}
+
+.modalActions{
+
+display:flex;
+
+gap:10px;
+
+margin-top:18px;
+
+}
+
+.mBtn{
+
+flex:1;
+
+height:54px;
+
+border:none;
+
+border-radius:16px;
+
+cursor:pointer;
+
+font-family:'Cairo';
+
+font-size:15px;
+
+font-weight:800;
+
+color:white;
+
+}
+
+.mBtn.green{
+
+background:
+linear-gradient(135deg,#22c55e,#16a34a);
+
+}
+
+.mBtn.gray{
+
+background:
+linear-gradient(135deg,#475569,#334155);
+
+}
+
+.agreeBox{
+
+display:flex;
+
+align-items:center;
+
+gap:10px;
+
+margin-top:14px;
+
+font-size:14px;
+
+color:#cbd5e1;
+
+}
+.policyAgree{
+
+display:flex;
+
+align-items:center;
+
+justify-content:space-between;
+
+gap:12px;
+
+margin-top:14px;
+
+flex-wrap:wrap;
+
+}
+
+.policyAgree label{
+
+color:white;
+
+font-size:15px;
+
+}
+
+.showPolicyBtn{
+
+border:none;
+
+padding:10px 16px;
+
+border-radius:14px;
+
+cursor:pointer;
+
+font-weight:700;
+
+background:rgba(0,153,255,.15);
+
+color:#4cc9ff;
+
+transition:.25s;
+
+}
+
+.showPolicyBtn:hover{
+
+background:rgba(0,153,255,.25);
+
+}
+/* ===== مكان التمرير يمين ===== */
+
+.policyBox{
+
+direction:rtl;
+
+overflow-y:auto;
+
+scrollbar-gutter:stable;
+
+}
+
+/* ===== شريط التمرير كامل ===== */
+
+.policyBox::-webkit-scrollbar{
+
+width:10px;
+
+}
+
+/* ===== الخلفية ===== */
+
+.policyBox::-webkit-scrollbar-track{
+
+background:rgba(255,255,255,.05);
+
+border-radius:20px;
+
+margin:10px;
+
+}
+
+/* ===== المقبض ===== */
+
+.policyBox::-webkit-scrollbar-thumb{
+
+background:linear-gradient(
+180deg,
+#00bfff,
+#0066ff
+);
+
+border-radius:20px;
+
+border:2px solid transparent;
+
+background-clip:padding-box;
+
+}
+
+/* ===== عند التحويم ===== */
+
+.policyBox::-webkit-scrollbar-thumb:hover{
+
+background:linear-gradient(
+180deg,
+#33ccff,
+#0051ff
+);
+
+}
+
+/* ===== Firefox ===== */
+
+.policyBox{
+
+scrollbar-width:thin;
+
+scrollbar-color:#0099ff rgba(255,255,255,.05);
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="orb one"></div>
+<div class="orb two"></div>
+<div class="orb three"></div>
+
+<div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+  <div class="shell">
+    <section class="brand">
+      <div class="logoWrap">
+        <div class="logo">🏥</div>
+        <div>
+          <div style="color:#93c5fd;font-size:14px;font-weight:700;letter-spacing:.6px;margin-bottom:4px;">MEDICAL LAB PLATFORM</div>
+          <div style="color:#e2e8f0;font-size:16px;">Basra Oil Hospital</div>
+        </div>
+      </div>
+
+      <h1>نظام إدارة التحليلات المختبرية</h1>
+      <p>ادارة مستشفى نفط البصرة لجراحة القلب / قسم المختبرات الطبية النظام الخاص لمتابعة تحاليل المرضى</p>
+
+      <div class="features">
+        <div class="feature">
+          <div class="k">رؤية جديدة</div>
+          <div class="v">تسعى ادارة مستشفى النفط قسم المختبرات الطبية الى احداث طفرة نوعيه تتميز بها مستشفانا حيث تعمل على تسهيل الروتين على اهلنا في البصرة.</div>
+        </div>
+        <div class="feature">
+          <div class="k">الدخول</div>
+          <div class="v">دخول ذكي ونظام يسمح بمراقبة حالات المرضى وارشيف متكامل يسمح بمتابعة الحالات ..</div>
+        </div>
+        <div class="feature">
+          <div class="k">الغرض من النظام</div>
+          <div class="v">مواكبة التطور الحاصل في القطاع الصحي في دول العالم ,حيث تسعى شعبة المختبرات الى تسهيل الاجراءات الروتينيه للمرضى.</div>
+        </div>
+        <div class="feature">
+          <div class="k">الأمان</div>
+          <div class="v">لا تشارك أسم المستخدم او كلمة المرور مع اي شخص اخر.</div>
+        </div>
+      </div>
+
+      <div class="noteBox">
+        <b>طريقة الدخول للنظام</b>
+        <span>في حقل أسم المستخدم أدخل أسم المستخدم الذي تم تزويدك به ,في حقل كلمة المرور ادخل كلمة المرور الخاصة بك. يسمح فقط للمنتسبين بدخول النظام.</span>
+      </div>
+    </section>
+
+    <section class="loginSide">
+      <div class="card" id="card">
+        <div class="cardHead">
+          <div>
+            <h2>تسجيل الدخول</h2>
+            <p>أدخل بيانات الاعتماد للوصول للوحة التحكم.</p>
+          </div>
+          <div class="badge">Enterprise Secure</div>
+        </div>
+{% if error %}
+
+<div class="loginError">
+
+{{ error }}
+
+</div>
+
+{% endif %}
+        <form method="POST" onsubmit="return loginCheck()">
+          <div class="field">
+            <label for="user">اسم المستخدم</label>
+            <span class="icon">👤</span>
+            <input
+id="user"
+name="username"
+type="text"
+autocomplete="off"
+placeholder="أدخل اسم المستخدم">
+          </div>
+
+          <div class="field">
+            <label for="pass">كلمة المرور</label>
+            <button type="button" class="passToggle" onclick="togglePass()" aria-label="show password">👁️</button>
+            <input
+id="pass"
+name="password"
+type="password"
+autocomplete="new-password"
+placeholder="أدخل كلمة المرور">
+          </div>
+
+          <div class="actions">
+            <button id="btn" class="submit" type="submit">
+              <span class="txt">دخول النظام</span>
+            </button>
+          </div>
+
+          <div class="serverError" id="serverError">
+            ⚠️ تحقق من البيانات المدخلة
+          </div>
+
+          <div class="helper">تحذير: لا يسمح بالدخول لغير المنتسبين المصرح لهم</div>
+          <button
+type="button"
+class="createAccountBtn"
+onclick="openRegisterModal()">
+
+➕ إنشاء حساب منتسب جديد
+
+</button>
+
+<div class="warningBox">
+
+⚠️ يمنع الدخول أو إنشاء حساب
+لغير المنتسبين المصرح لهم،
+
+وبخلاف ذلك فإنك تعرض نفسك
+للمساءلة القانونية والإدارية.
+
+</div>
+        </form>
+
+        <div class="shimmerLine"></div>
+      </div>
+    </section>
+  </div>
+<div id="liveClock"></div>
+  <div class="footer">برمجة وتصميم / التقني الطبي حيدر سعدون صالح</div>
+</div>
+<div
+class="modalBackdrop"
+id="registerModal">
+
+<div class="modal">
+
+<div class="modalTitle">
+
+👤 إنشاء حساب جديد
+
+</div>
+
+<div class="field">
+
+<label>
+اسم المستخدم
+</label>
+
+<input id="regUsername">
+
+</div>
+
+<div class="field">
+
+<label>
+كلمة المرور
+</label>
+
+<input
+type="password"
+id="regPassword">
+
+</div>
+
+<div class="field">
+
+<label>
+تأكيد كلمة المرور
+</label>
+
+<input
+type="password"
+id="regPassword2">
+
+</div>
+
+<div class="field">
+
+<label>
+الرمز السري للإدارة
+</label>
+
+<input
+type="password"
+id="managerSecret">
+
+</div>
+
+<!-- ===== الكابتشا الاحترافية ===== -->
+
+<div class="captchaBox">
+
+<div class="captchaTop">
+
+<div id="captchaText"
+class="captchaText">
+
+ABC12
+
+</div>
+
+<button
+type="button"
+class="refreshCaptcha"
+onclick="generateCaptcha()">
+
+🔄
+
+</button>
+
+</div>
+
+<input
+type="text"
+id="captchaInput"
+class="captchaInput"
+placeholder="اكتب الكود الظاهر">
+
+</div>
+
+<div class="policyAgree">
+
+<label>
+
+<input type="checkbox" id="agreePolicy">
+
+أوافق على سياسة الاستخدام
+
+</label>
+
+<button type="button"
+onclick="openPolicy()"
+class="showPolicyBtn">
+
+قراءة السياسة
+
+</button>
+
+</div>
+
+<div class="warningBox">
+
+⚠️ يمنع إنشاء الحسابات
+لغير المنتسبين المصرح لهم.
+
+</div>
+
+<div class="modalActions">
+
+<button
+class="mBtn green"
+onclick="registerUser()">
+
+إنشاء الحساب
+
+</button>
+
+<button
+class="mBtn gray"
+onclick="closeRegisterModal()">
+
+إغلاق
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+    function openPolicy(){
+
+document.getElementById("policyModal").style.display="flex";
+
+}
+
+function closePolicy(){
+
+document.getElementById("policyModal").style.display="none";
+
+}
+
+function togglePass(){
+
+  const p =
+  document.getElementById("pass");
+
+  const btn =
+  document.querySelector(".passToggle");
+
+  if(p.type === "password"){
+
+    p.type = "text";
+
+    btn.innerHTML = "🙈";
+
+  }else{
+
+    p.type = "password";
+
+    btn.innerHTML = "👁️";
+
+  }
+
+}
+
+function showToast(message, type){
+  const t = document.getElementById("toast");
+  t.className = "toast " + (type || "success");
+  t.innerText = message;
+  t.style.display = "block";
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => {
+    t.style.display = "none";
+  }, 2200);
+}
+let loginAttempts = 0;
+
+let lockUntil = 0;
+
+function loginCheck(){
+    if(Date.now() < lockUntil){
+
+showToast(
+"⛔ تم قفل تسجيل الدخول مؤقتاً",
+"error"
+);
+
+return false;
+
+}
+
+  const u = document.getElementById("user").value.trim();
+  const p = document.getElementById("pass").value.trim();
+  const btn = document.getElementById("btn");
+  const serverError = document.getElementById("serverError");
+
+  if(!u || !p){
+    loginAttempts++;
+    serverError.style.display = "block";
+    serverError.innerText = "⚠️ يرجى إدخال اسم المستخدم وكلمة المرور";
+    showToast("⚠️ املأ جميع الحقول", "error");
+    shakeCard();
+    if(loginAttempts >= 5){
+
+lockUntil = Date.now() + 60000;
+
+showToast(
+"⛔ تم قفل تسجيل الدخول لمدة دقيقة",
+"error"
+);
+
+}
+
+    return false;
+  }
+
+  serverError.style.display = "none";
+  btn.classList.add("loading");
+  btn.querySelector(".txt").innerText = "جاري التحقق...";
+  return true;
+}
+
+function shakeCard(){
+
+const card =
+document.getElementById("card");
+
+card.animate(
+
+[
+{ transform:"translateX(0)" },
+{ transform:"translateX(-8px)" },
+{ transform:"translateX(8px)" },
+{ transform:"translateX(-6px)" },
+{ transform:"translateX(6px)" },
+{ transform:"translateX(0)" }
+],
+
+{
+duration:380,
+iterations:1
+}
+
+);
+
+}
+
+function shakeModal(){
+
+const modal =
+document.querySelector(".modal");
+
+modal.animate(
+
+[
+{ transform:"translateX(0)" },
+{ transform:"translateX(-8px)" },
+{ transform:"translateX(8px)" },
+{ transform:"translateX(-6px)" },
+{ transform:"translateX(6px)" },
+{ transform:"translateX(0)" }
+],
+
+{
+duration:380,
+iterations:1
+}
+
+);
+
+}
+
+function updateClock(){
+
+const now = new Date();
+
+document.getElementById("liveClock").innerHTML =
+
+"🕒 " +
+
+now.toLocaleTimeString("ar-IQ") +
+
+" | " +
+
+now.toLocaleDateString("ar-IQ");
+
+}
+
+setInterval(updateClock,1000);
+
+updateClock();
+let currentCaptcha = "";
+
+function generateCaptcha(){
+
+const chars =
+"ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+let result = "";
+
+for(let i=0;i<5;i++){
+
+result += chars.charAt(
+Math.floor(
+Math.random()*chars.length
+)
+);
+
+}
+
+currentCaptcha = result;
+
+document.getElementById(
+"captchaText"
+).innerText = result;
+
+}
+
+function openRegisterModal(){
+
+document
+.getElementById(
+"registerModal"
+).style.display = "flex";
+
+generateCaptcha();
+
+}
+
+function closeRegisterModal(){
+
+document
+.getElementById(
+"registerModal"
+).style.display = "none";
+
+}
+
+function registerUser(){
+    const registerBtn = document.querySelector(
+".mBtn.green"
+);
+
+registerBtn.disabled = true;
+
+registerBtn.innerHTML = "⏳ جاري الإنشاء...";
+
+if(
+!document
+.getElementById(
+"agreePolicy"
+).checked
+){
+
+showToast(
+"يجب الموافقة على الشروط",
+"error"
+);
+registerBtn.disabled = false;
+
+registerBtn.innerHTML = "إنشاء الحساب";
+return;
+
+}
+
+const password =
+document.getElementById(
+"regPassword"
+).value;
+
+const confirm =
+document.getElementById(
+"regPassword2"
+).value;
+
+if(password !== confirm){
+
+showToast(
+"كلمتا المرور غير متطابقتين",
+"error"
+);
+registerBtn.disabled = false;
+
+registerBtn.innerHTML = "إنشاء الحساب";
+return;
+
+}
+const captchaInput =
+
+document.getElementById(
+"captchaInput"
+).value.trim();
+
+if(
+captchaInput !== currentCaptcha
+){
+
+showToast(
+"فشل التحقق الأمني",
+"error"
+);
+
+document.getElementById(
+"regPassword"
+).value = "";
+
+document.getElementById(
+"regPassword2"
+).value = "";
+
+document.getElementById(
+"captchaInput"
+).value = "";
+
+generateCaptcha();
+
+shakeModal();
+registerBtn.disabled = false;
+
+registerBtn.innerHTML = "إنشاء الحساب";
+return;
+
+}
+if(password.length < 6){
+
+showToast(
+"كلمة المرور يجب أن تكون 6 أحرف على الأقل",
+"error"
+);
+registerBtn.disabled = false;
+
+registerBtn.innerHTML = "إنشاء الحساب";
+return;
+
+}
+
+const data =
+new URLSearchParams({
+
+username:
+document.getElementById(
+"regUsername"
+).value,
+
+password:password,
+
+confirm:confirm,
+
+secret:
+document.getElementById(
+"managerSecret"
+).value,
+
+captcha:
+document.getElementById(
+"captchaInput"
+).value
+
+});
+
+fetch("/register",{
+
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/x-www-form-urlencoded"
+},
+
+body:data
+
+})
+
+.then(r=>r.text())
+
+.then(res=>{
+
+registerBtn.disabled = false;
+
+registerBtn.innerHTML = "إنشاء الحساب";
+
+if(res === "OK"){
+
+showToast(
+
+"✅ تم إنشاء الحساب بنجاح\n\n" +
+
+"⏳ الحساب بانتظار موافقة الإدارة\n\n" +
+
+"لن تتمكن من تسجيل الدخول " +
+
+"حتى تتم الموافقة على الحساب",
+
+"success"
+
+);
+
+setTimeout(()=>{
+
+closeRegisterModal();
+
+},2500);
+
+}else{
+
+showToast(
+res,
+"error"
+);
+
+}
+
+});
+
+
+}
+</script>
+<!-- ===== نافذة سياسة الاستخدام ===== -->
+
+<div id="policyModal" class="policyModal">
+
+  <div class="policyBox">
+
+<!-- العنوان -->
+<div class="policyHeader">
+
+  <div class="policyIcon">
+    🛡️
+  </div>
+
+  <div>
+    <h2>سياسة الاستخدام</h2>
+    <span>يرجى قراءة الشروط بعناية</span>
+  </div>
+
+</div>
+
+<!-- المحتوى -->
+<div class="policyContent">
+
+  <div class="policyItem">
+    <h3>إنشاء الحسابات</h3>
+    <p>
+      يمنع إنشاء حسابات وهمية أو استخدام معلومات غير حقيقية.
+    </p>
+  </div>
+
+  <div class="policyItem">
+    <h3>حماية الحساب</h3>
+    <p>
+      المستخدم مسؤول عن حماية كلمة المرور وعدم مشاركتها مع الآخرين.
+    </p>
+  </div>
+
+  <div class="policyItem">
+    <h3>الاستخدام المسموح</h3>
+    <p>
+      يمنع استخدام النظام لأي نشاط مخالف أو محاولة اختراق أو تعطيل.
+    </p>
+  </div>
+
+  <div class="policyItem">
+    <h3>الأمان والمراقبة</h3>
+    <p>
+      قد يتم تسجيل العمليات داخل النظام لأغراض الحماية والأمان.
+    </p>
+  </div>
+
+  <div class="policyItem">
+    <h3>صلاحيات الإدارة</h3>
+    <p>
+      يحق للإدارة تعليق أو حذف الحسابات المخالفة دون إشعار مسبق.
+    </p>
+  </div>
+
+  <div class="policyItem">
+    <h3>الموافقة القانونية</h3>
+    <p>
+      بإنشائك للحساب فإنك توافق على جميع الشروط والأحكام المذكورة.
+    </p>
+  </div>
+
+</div>
+
+<!-- الأزرار -->
+<div class="policyActions">
+
+  <button class="policyCloseBtn"
+          onclick="closePolicy()">
+    إغلاق
+  </button>
+
+</div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

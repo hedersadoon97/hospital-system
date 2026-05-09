@@ -1,0 +1,3109 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة التحكم - نظام التحليلات</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/dashboard.css">
+
+<style>
+  /* ===== إخفاء نوافذ التقارير افتراضياً ===== */
+
+#reportDateModal,
+#reportRangeModal{
+
+display:none !important;
+
+}
+
+
+
+:root{
+  --bg1:#020617;
+  --bg2:#0f172a;
+  --panel:rgba(15,23,42,.68);
+  --panel2:rgba(15,23,42,.86);
+  --line:rgba(255,255,255,.10);
+  --text:#f8fafc;
+  --muted:#94a3b8;
+  --accent:#3b82f6;
+  --accent2:#2563eb;
+  --green:#22c55e;
+  --green2:#16a34a;
+  --red:#ef4444;
+  --amber:#f59e0b;
+  --cyan:#06b6d4;
+  --danger:#ff3b3b;
+  --radius:28px;
+  --shadow:0 30px 90px rgba(0,0,0,.42);
+}
+.datePickerWrap{
+position:relative;
+display:inline-block;
+}
+
+.datePopup{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:rgba(15,23,42,.95);
+backdrop-filter:blur(8px);
+border:1px solid rgba(255,255,255,.08);
+padding:18px;
+border-radius:18px;
+width:260px;
+display:none;
+box-shadow:0 15px 40px rgba(0,0,0,.45);
+z-index:999999;
+animation:fadeIn .25s ease;
+}
+
+.datePopup.show{
+display:none !important;
+}
+
+.dateTitle{
+font-size:16px;
+font-weight:700;
+margin-bottom:14px;
+color:#fff;
+}
+
+.dateRange{
+display:flex;
+gap:10px;
+flex-direction:column;
+margin-bottom:14px;
+}
+
+.dateRange label{
+display:block;
+margin-bottom:6px;
+font-size:13px;
+color:#cbd5e1;
+}
+
+@keyframes fadeIn{
+from{
+opacity:0;
+transform:translateY(-8px);
+}
+
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+.datePopup input{
+width:100%;
+margin-bottom:14px;
+padding:12px;
+border-radius:12px;
+border:none;
+background:#1e293b;
+color:white;
+font-size:15px;
+}
+
+.datePopup .actionBtn{
+width:100%;
+justify-content:center;
+}
+
+*{box-sizing:border-box}
+*{box-sizing:border-box}
+
+html{
+scroll-behavior:smooth;
+}
+
+body{
+overflow-y:auto;
+}
+html,body{
+  margin:0;
+  width:100%;
+  min-height:100%;
+  font-family:'Cairo',sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 10% 10%, rgba(59,130,246,.16), transparent 22%),
+    radial-gradient(circle at 90% 12%, rgba(34,197,94,.14), transparent 20%),
+    radial-gradient(circle at 50% 100%, rgba(245,158,11,.10), transparent 22%),
+    linear-gradient(135deg,var(--bg1),var(--bg2));
+  overflow-x:hidden;
+}
+
+body{
+  position:relative;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background-image:
+    linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+  background-size:54px 54px;
+  opacity:.12;
+  mask-image: radial-gradient(circle at center, black 38%, transparent 85%);
+}
+
+.orb{
+  position:fixed;
+  border-radius:50%;
+  pointer-events:none;
+  filter:blur(10px);
+  opacity:.7;
+  animation: drift 14s ease-in-out infinite;
+}
+.orb.a{
+  width:300px;height:300px;left:-90px;top:-80px;
+  background:radial-gradient(circle, rgba(59,130,246,.40), transparent 66%);
+}
+.orb.b{
+  width:230px;height:230px;right:-75px;top:12%;
+  background:radial-gradient(circle, rgba(34,197,94,.28), transparent 66%);
+  animation-duration:18s;
+}
+.orb.c{
+  width:260px;height:260px;right:8%;bottom:-100px;
+  background:radial-gradient(circle, rgba(245,158,11,.18), transparent 66%);
+  animation-duration:20s;
+}
+
+@keyframes drift{
+  0%,100%{transform:translate(0,0) scale(1)}
+  25%{transform:translate(14px,18px) scale(1.04)}
+  50%{transform:translate(-10px,8px) scale(.98)}
+  75%{transform:translate(8px,-12px) scale(1.02)}
+}
+
+.page{
+  position:relative;
+  z-index:2;
+  width:min(1480px, calc(100vw - 24px));
+  margin:12px auto 24px;
+}
+
+.topBar{
+  display:flex;
+  align-items:stretch;
+  justify-content:space-between;
+  gap:18px;
+  padding:20px;
+  border:1px solid var(--line);
+  border-radius:32px;
+  background:linear-gradient(180deg, rgba(15,23,42,.78), rgba(15,23,42,.56));
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(22px);
+  overflow:hidden;
+}
+
+.brand{
+  display:flex;
+  gap:16px;
+  align-items:center;
+  min-width:0;
+}
+
+.brandLogo{
+  width:64px;height:64px;
+  border-radius:20px;
+  display:grid;
+  place-items:center;
+  font-size:28px;
+  background:linear-gradient(135deg, rgba(59,130,246,.96), rgba(34,197,94,.88));
+  box-shadow:0 18px 30px rgba(59,130,246,.24);
+  flex:0 0 auto;
+}
+
+.brandText{
+  min-width:0;
+}
+
+.brandText h1{
+  margin:0;
+  font-size:30px;
+  line-height:1.2;
+  font-weight:800;
+}
+
+.brandText .sub{
+  margin-top:6px;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.8;
+}
+
+.userChip{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-end;
+  gap:8px;
+  min-width: 220px;
+}
+
+.userChip .pill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  border-radius:999px;
+  background:rgba(59,130,246,.14);
+  color:#dbeafe;
+  border:1px solid rgba(59,130,246,.22);
+  font-weight:700;
+  font-size:13px;
+}
+
+.userChip .small{
+  color:var(--muted);
+  font-size:13px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap:18px;
+  margin-top:18px;
+}
+
+.panel{
+  border:1px solid var(--line);
+  border-radius:32px;
+  background:linear-gradient(180deg, rgba(15,23,42,.70), rgba(15,23,42,.54));
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(18px);
+  overflow:hidden;
+}
+
+.metrics{
+  display:grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap:14px;
+  padding:18px;
+}
+
+.metric{
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:24px;
+  padding:18px 16px;
+  background:linear-gradient(180deg, rgba(2,6,23,.70), rgba(2,6,23,.46));
+  position:relative;
+  overflow:hidden;
+  min-height:122px;
+}
+
+.metric::before{
+  content:"";
+  position:absolute;
+  inset:auto -30% 0 -30%;
+  height:1px;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+  opacity:.8;
+}
+
+.metric .t{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  color:#cbd5e1;
+  font-size:14px;
+  margin-bottom:12px;
+}
+
+.metric .v{
+  font-size:34px;
+  font-weight:800;
+  line-height:1;
+}
+
+.metric .d{
+  margin-top:10px;
+  color:#94a3b8;
+  font-size:13px;
+  line-height:1.7;
+}
+
+.metric.blue .v{color:#93c5fd}
+.metric.green .v{color:#86efac}
+.metric.amber .v{color:#fdba74}
+.metric.red .v{color:#fda4af}
+
+.toolbar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 18px 18px;
+}
+
+.searchWrap{
+flex:1 1 100% !important;
+width:100% !important;
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.search{
+width:100% !important;
+max-width:100% !important;
+height:46px;
+border-radius:18px;
+border:1px solid rgba(148,163,184,.22);
+background:rgba(2,6,23,.82);
+color:var(--text);
+padding:0 16px;
+outline:none;
+font-size:15px;
+transition:.24s;
+}
+
+.search:focus{
+  border-color:rgba(59,130,246,.8);
+  box-shadow:0 0 0 5px rgba(59,130,246,.14);
+}
+.sectionTabs{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-bottom:18px;
+align-items:center;
+}
+
+.sectionBtn{
+background:#1e293b;
+color:white;
+border:none;
+padding:10px 18px;
+border-radius:12px;
+cursor:pointer;
+font-family:'Cairo';
+font-size:15px;
+font-weight:700;
+transition:.25s;
+box-shadow:0 4px 12px rgba(0,0,0,.25);
+}
+
+.sectionBtn:hover{
+transform:translateY(-2px);
+background:#334155;
+box-shadow:0 8px 18px rgba(0,0,0,.35);
+}
+
+.sectionBtn.active{
+background:linear-gradient(135deg,#3b82f6,#2563eb);
+}
+.filters{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.filterBtn,
+.actionBtn{
+  height:50px;
+  border:none;
+  border-radius:16px;
+  padding:0 16px;
+  cursor:pointer;
+  font-family:'Cairo',sans-serif;
+  font-weight:700;
+  font-size:14px;
+  transition:.22s;
+  color:white;
+}
+
+.filterBtn{
+  background:rgba(30,41,59,.95);
+  border:1px solid rgba(255,255,255,.08);
+}
+
+.filterBtn.active{
+  background:linear-gradient(135deg, var(--accent), var(--accent2));
+  box-shadow:0 14px 26px rgba(59,130,246,.22);
+}
+
+.filterBtn:hover,
+.actionBtn:hover{
+  transform:translateY(-1px);
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+
+.actionBtn{
+  background:linear-gradient(135deg, rgba(59,130,246,.96), rgba(37,99,235,.96));
+  box-shadow:0 14px 28px rgba(59,130,246,.24);
+}
+
+.actionBtn.green{
+  background:linear-gradient(135deg, rgba(34,197,94,.96), rgba(22,163,74,.96));
+  box-shadow:0 14px 28px rgba(34,197,94,.24);
+}
+
+.actionBtn.red{
+  background:linear-gradient(135deg, rgba(239,68,68,.96), rgba(220,38,38,.96));
+  box-shadow:0 14px 28px rgba(239,68,68,.22);
+}
+
+.actionBtn.gray{
+  background:linear-gradient(135deg, rgba(51,65,85,.96), rgba(15,23,42,.96));
+  box-shadow:0 14px 28px rgba(0,0,0,.22);
+}
+
+.searchInfo{
+  padding:0 18px 18px;
+  color:#cbd5e1;
+  font-size:14px;
+}
+
+.tableWrap{
+  padding:0 18px 20px;
+  overflow:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  min-width:1080px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:24px;
+  overflow:hidden;
+  background:rgba(2,6,23,.66);
+}
+
+thead th{
+  position:sticky;
+  top:0;
+  z-index:1;
+  background:linear-gradient(180deg, #334155, #1e293b);
+  color:#e2e8f0;
+  font-size:15px;
+  font-weight:800;
+  text-align:center;
+  padding:16px 14px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+tbody td{
+  padding:14px 12px;
+  text-align:center;
+  border-bottom:1px solid rgba(71,85,105,.55);
+  color:#e5e7eb;
+  font-size:14px;
+}
+
+tbody tr{
+  transition:.22s ease;
+}
+
+tbody tr:hover{
+  background:rgba(51,65,85,.68);
+}
+
+.badgeStatus{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:110px;
+  padding:8px 12px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:800;
+  border:1px solid transparent;
+}
+
+.done{background:rgba(34,197,94,.14); color:#bbf7d0; border-color:rgba(34,197,94,.24);}
+.notdone{background:rgba(239,68,68,.14); color:#fecaca; border-color:rgba(239,68,68,.24);}
+.working{background:rgba(245,158,11,.12); color:#fed7aa; border-color:rgba(245,158,11,.24);}
+.alert{
+  background:rgba(255,0,0,.16);
+  color:#ffe4e6;
+  animation: alertPulse 1s infinite;
+  border-color:rgba(255,59,59,.28);
+}
+.danger{
+  background:rgba(255,59,59,.20);
+  color:#fff1f2;
+  animation: dangerPulse 1s infinite;
+  border-color:rgba(255,59,59,.35);
+}
+.warning{
+  background:rgba(245,158,11,.16);
+  color:#fef3c7;
+  border-color:rgba(245,158,11,.28);
+}
+
+@keyframes alertPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(255,59,59,.0)}
+  50%{box-shadow:0 0 0 6px rgba(255,59,59,.10)}
+}
+
+@keyframes dangerPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(255,59,59,.0)}
+  50%{box-shadow:0 0 0 8px rgba(255,59,59,.14)}
+}
+
+.btn{
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+  color:white;
+  padding:8px 11px;
+  margin:2px;
+  font-family:'Cairo',sans-serif;
+  font-size:13px;
+  font-weight:700;
+  transition:.22s;
+  box-shadow:0 8px 18px rgba(0,0,0,.16);
+}
+
+.btn:hover{transform:translateY(-1px) scale(1.03)}
+
+.btn.green{background:linear-gradient(135deg, #22c55e, #16a34a);}
+.btn.red{background:linear-gradient(135deg, #ef4444, #dc2626);}
+.btn.blue{background:linear-gradient(135deg, #3b82f6, #2563eb);}
+.btn.amber{background:linear-gradient(135deg, #f59e0b, #d97706);}
+
+.noData{
+  padding:28px 16px;
+  text-align:center;
+  color:#fda4af;
+  font-size:18px;
+}
+
+.footer{
+  margin:18px 0 8px;
+  text-align:center;
+  color:#94a3b8;
+  font-size:13px;
+}
+
+.toast{
+  position:fixed;
+  bottom:24px;
+  left:50%;
+  transform:translateX(-50%);
+  min-width:260px;
+  max-width:min(560px, calc(100vw - 24px));
+  padding:14px 18px;
+  border-radius:16px;
+  display:none;
+  z-index:99999;
+  font-weight:800;
+  text-align:center;
+  box-shadow:0 18px 50px rgba(0,0,0,.35);
+}
+
+.toast.success{background:linear-gradient(135deg, #22c55e, #16a34a); color:white;}
+.toast.error{background:linear-gradient(135deg, #ef4444, #dc2626); color:white;}
+.toast.info{background:linear-gradient(135deg, #3b82f6, #2563eb); color:white;}
+.toast.warn{background:linear-gradient(135deg, #f59e0b, #d97706); color:white;}
+.modalBackdrop{
+position:fixed;
+inset:0;
+background:rgba(2,6,23,.72);
+backdrop-filter:blur(10px);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:999999999;
+padding:16px;
+}
+
+/* ===== نافذة الإعدادات الاحترافية ===== */
+
+.modal{
+max-width:1400px !important;
+width:min(1400px, 96vw);
+height:92vh;
+
+max-height:88vh;
+
+background:
+linear-gradient(
+180deg,
+rgba(15,23,42,.98),
+rgba(2,6,23,.96)
+);
+
+border:
+1px solid rgba(255,255,255,.08);
+
+border-radius:32px;
+
+backdrop-filter:blur(24px);
+
+box-shadow:
+0 25px 80px rgba(0,0,0,.55);
+
+overflow:hidden;
+
+animation:modalShow .25s ease;
+}
+
+@keyframes modalShow{
+
+from{
+opacity:0;
+transform:translateY(15px) scale(.96);
+}
+
+to{
+opacity:1;
+transform:translateY(0) scale(1);
+}
+
+}
+
+.modalBody{
+
+max-height:72vh;
+
+overflow-y:auto;
+
+overflow-x:hidden;
+
+padding:18px 22px 22px;
+width:100%;
+
+display:flex;
+
+flex-direction:column;
+
+/* 🔥 الشريط باليمين */
+direction:ltr;
+
+scrollbar-width:thin;
+scrollbar-color:#3b82f6 rgba(255,255,255,.04);
+
+}
+
+/* رجوع المحتوى عربي */
+
+.modalBody > *{
+
+direction:rtl;
+
+}
+
+/* ===== Scrollbar احترافي ===== */
+
+.modalBody::-webkit-scrollbar{
+width:10px;
+}
+
+.modalBody::-webkit-scrollbar-track{
+
+background:
+rgba(255,255,255,.03);
+
+border-radius:20px;
+
+margin:10px;
+}
+
+.modalBody::-webkit-scrollbar-thumb{
+
+background:
+linear-gradient(
+180deg,
+#3b82f6,
+#2563eb
+);
+
+border-radius:20px;
+
+border:2px solid transparent;
+
+background-clip:padding-box;
+}
+
+.modalBody::-webkit-scrollbar-thumb:hover{
+
+background:
+linear-gradient(
+180deg,
+#60a5fa,
+#3b82f6
+);
+
+}
+
+/* Firefox */
+
+.modalBody{
+scrollbar-width:thin;
+scrollbar-color:#3b82f6 rgba(255,255,255,.04);
+}
+
+.modalHead{
+  padding:22px 22px 0;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+}
+
+.modalHead h3{
+  margin:0;
+  font-size:24px;
+  font-weight:800;
+}
+
+.modalHead p{
+  margin:8px 0 0;
+  color:var(--muted);
+  line-height:1.8;
+  font-size:14px;
+}
+
+.closeBtn{
+  width:42px;height:42px;
+  border:none;
+  border-radius:14px;
+  background:rgba(255,255,255,.08);
+  color:white;
+  cursor:pointer;
+  font-size:20px;
+}
+
+.formGrid{
+  display:grid;
+  grid-template-columns:
+repeat(auto-fit,minmax(320px,1fr));
+  gap:12px;
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.field.full{
+  grid-column:1 / -1;
+}
+
+.field label{
+  font-size:14px;
+  color:#cbd5e1;
+  font-weight:700;
+}
+
+.field input,
+.field select{
+  height:48px;
+  padding:0 14px;
+  border-radius:16px;
+  border:1px solid rgba(148,163,184,.22);
+  background:rgba(2,6,23,.82);
+  color:var(--text);
+  outline:none;
+  font-family:'Cairo',sans-serif;
+  font-size:15px;
+  transition:.22s ease;
+}
+.userActions select{
+
+padding:10px 14px;
+
+border-radius:12px;
+
+background:
+rgba(255,255,255,.08);
+
+color:white;
+
+border:
+1px solid rgba(255,255,255,.1);
+
+font-family:'Cairo';
+
+font-weight:700;
+
+font-size:15px;
+
+outline:none;
+
+cursor:pointer;
+
+height:44px;
+
+min-width:90px;
+
+}
+
+.userActions select option{
+
+background:#0f172a;
+
+color:white;
+
+}
+
+.field input:focus,
+.field select:focus{
+  border-color:rgba(59,130,246,.82);
+  box-shadow:0 0 0 5px rgba(59,130,246,.14);
+}
+
+
+.modalActions button{
+
+width:160px !important;
+
+display:flex !important;
+
+justify-content:center !important;
+
+align-items:center !important;
+
+}
+
+.mBtn.gray{background:linear-gradient(135deg, #334155, #1e293b);}
+.mBtn.blue{background:linear-gradient(135deg, #3b82f6, #2563eb);}
+.mBtn.green{background:linear-gradient(135deg, #22c55e, #16a34a);}
+.mBtn.red{background:linear-gradient(135deg, #ef4444, #dc2626);}
+
+.smallHint{
+  margin-top:10px;
+  font-size:13px;
+  color:#94a3b8;
+  line-height:1.8;
+}
+
+.pillRole{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  border-radius:999px;
+  background:rgba(59,130,246,.12);
+  color:#dbeafe;
+  border:1px solid rgba(59,130,246,.22);
+  font-weight:800;
+  font-size:13px;
+}
+
+.rowActions{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+
+.emptyState{
+  padding:34px 12px;
+  text-align:center;
+  color:#cbd5e1;
+}
+
+@media (max-width: 1200px){
+  .metrics{
+    grid-template-columns: repeat(2, minmax(0,1fr));
+  }
+}
+
+@media (max-width: 860px){
+  .topBar{
+    flex-direction:column;
+  }
+  .userChip{
+    align-items:flex-start;
+    min-width:0;
+  }
+  .toolbar{
+    flex-direction:column;
+    align-items:stretch;
+  }
+  .actions{
+    justify-content:flex-start;
+  }
+  .metrics{
+    grid-template-columns:1fr;
+  }
+  .formGrid{
+    grid-template-columns:1fr;
+  }
+  .field.full{
+    grid-column:auto;
+  }
+}
+
+@media (max-width: 560px){
+  .page{
+    width:calc(100vw - 12px);
+    margin-top:6px;
+  }
+  .topBar,
+  .panel{
+    border-radius:24px;
+  }
+  .brandText h1{
+    font-size:22px;
+  }
+  .brandLogo{
+    width:54px;height:54px;border-radius:18px;font-size:24px;
+  }
+}
+/* ===== التحاليل ===== */
+
+.testsGrid{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(220px,1fr));
+
+gap:10px;
+
+margin-top:10px;
+
+}
+
+.testsGrid label{
+
+display:flex;
+
+align-items:center;
+
+gap:10px;
+
+padding:12px;
+
+border-radius:14px;
+
+background:
+rgba(255,255,255,.05);
+
+border:
+1px solid rgba(255,255,255,.08);
+
+cursor:pointer;
+
+transition:.22s;
+
+font-size:14px;
+
+font-weight:700;
+
+}
+
+.testsGrid label:hover{
+
+background:
+rgba(59,130,246,.12);
+
+border-color:
+rgba(59,130,246,.35);
+
+transform:translateY(-2px);
+
+}
+
+.testsGrid input[type="checkbox"]{
+
+width:18px;
+height:18px;
+
+accent-color:#3b82f6;
+
+cursor:pointer;
+
+}
+/* ===== عرض التحاليل داخل الجدول ===== */
+
+.testsCell{
+
+max-width:180px;
+
+display:flex;
+
+flex-wrap:wrap;
+
+gap:5px;
+
+justify-content:center;
+
+margin:auto;
+
+}
+
+.testBadge{
+
+background:
+rgba(59,130,246,.14);
+
+border:
+1px solid rgba(59,130,246,.25);
+
+color:#dbeafe;
+
+padding:4px 8px;
+
+border-radius:999px;
+
+font-size:11px;
+
+font-weight:700;
+
+white-space:nowrap;
+
+max-width:100%;
+
+overflow:hidden;
+
+text-overflow:ellipsis;
+
+}
+.testsBtn{
+
+border:none;
+
+padding:8px 14px;
+
+border-radius:999px;
+
+background:
+linear-gradient(135deg,#2563eb,#1d4ed8);
+
+color:#fff;
+
+font-weight:800;
+
+cursor:pointer;
+
+font-size:13px;
+
+transition:.2s;
+
+min-width:110px;
+
+}
+
+.testsBtn:hover{
+
+transform:scale(1.05);
+
+}
+
+.noteBox{
+width:220px;
+min-height:70px;
+resize:vertical;
+background:#0f172a;
+border:1px solid rgba(255,255,255,.08);
+color:white;
+border-radius:14px;
+padding:10px;
+font-family:'Cairo';
+font-size:14px;
+outline:none;
+transition:.2s;
+}
+.loginError{
+
+background:rgba(239,68,68,.12);
+
+border:1px solid rgba(239,68,68,.25);
+
+color:#fecaca;
+
+padding:14px;
+
+border-radius:14px;
+
+margin-bottom:18px;
+
+font-family:'Cairo';
+
+font-weight:700;
+
+text-align:center;
+
+animation:shake .35s ease;
+}
+
+@keyframes shake{
+
+0%{
+transform:translateX(0);
+}
+
+25%{
+transform:translateX(-5px);
+}
+
+50%{
+transform:translateX(5px);
+}
+
+75%{
+transform:translateX(-5px);
+}
+
+100%{
+transform:translateX(0);
+}
+
+}
+.noteBox:focus{
+border-color:#3b82f6;
+box-shadow:0 0 0 4px rgba(59,130,246,.15);
+}
+.usersPanel{
+
+margin-top:30px;
+
+padding:22px;
+
+border-radius:24px;
+
+background:
+rgba(15,23,42,.92);
+
+border:
+1px solid rgba(255,255,255,.08);
+
+box-shadow:
+0 20px 40px rgba(0,0,0,.25);
+
+}
+
+.usersTitle{
+
+font-size:24px;
+
+font-weight:800;
+
+margin-bottom:18px;
+
+}
+
+.userBlocked{
+
+border:
+1px solid rgba(239,68,68,.4);
+
+background:
+rgba(239,68,68,.08);
+
+}
+
+.userCard{
+
+padding:16px;
+
+border-radius:18px;
+
+background:
+rgba(255,255,255,.04);
+
+margin-bottom:14px;
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+gap:10px;
+
+flex-wrap:wrap;
+
+}
+
+.userActions{
+
+display:flex;
+
+gap:8px;
+
+flex-wrap:wrap;
+
+}
+
+.userBtn{
+
+border:none;
+
+padding:10px 14px;
+
+border-radius:12px;
+
+cursor:pointer;
+
+font-family:'Cairo';
+
+font-weight:700;
+
+color:white;
+
+}
+
+.greenBtn{
+
+background:#16a34a;
+
+}
+
+.redBtn{
+
+background:#dc2626;
+
+}
+
+.blueBtn{
+
+background:#2563eb;
+
+}
+.disabledBtn{
+
+opacity:.45;
+
+cursor:not-allowed;
+
+filter:grayscale(1);
+
+pointer-events:none;
+
+position:relative;
+
+}
+
+.disabledBtn::after{
+
+content:"🔒";
+
+margin-right:6px;
+
+}
+.userManageBtn{
+
+position:relative;
+
+}
+
+.pendingBadge{
+
+position:absolute;
+
+top:-8px;
+
+left:-8px;
+
+min-width:24px;
+
+height:24px;
+
+padding:0 6px;
+
+border-radius:999px;
+
+background:#ef4444;
+
+color:white;
+
+font-size:12px;
+
+font-weight:800;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+box-shadow:
+0 0 12px rgba(239,68,68,.45);
+
+animation:pulseBadge 1s infinite;
+
+}
+
+@keyframes pulseBadge{
+
+0%{
+transform:scale(1);
+}
+
+50%{
+transform:scale(1.1);
+}
+
+100%{
+transform:scale(1);
+}
+
+}
+/* ===== بطاقات الإعدادات ===== */
+
+.settingsCard{
+
+padding:18px;
+
+border-radius:24px;
+
+background:
+linear-gradient(
+180deg,
+rgba(255,255,255,.05),
+rgba(255,255,255,.03)
+);
+
+border:
+1px solid rgba(255,255,255,.06);
+
+box-shadow:
+0 10px 30px rgba(0,0,0,.18);
+
+margin-bottom:18px;
+}
+
+/* ===== تحسين الأزرار ===== */
+
+.mBtn{
+
+height:54px;
+
+border:none;
+
+border-radius:18px;
+
+padding:0 18px;
+
+font-family:'Cairo';
+
+font-size:15px;
+
+font-weight:800;
+
+cursor:pointer;
+
+transition:.25s;
+
+color:white;
+}
+
+.mBtn:hover{
+
+transform:
+translateY(-2px)
+scale(1.02);
+
+filter:brightness(1.06);
+}
+
+.mBtn:active{
+
+transform:scale(.98);
+}
+
+/* ===== زر الإغلاق ===== */
+
+.closeBtn{
+
+width:46px;
+height:46px;
+
+border-radius:16px;
+
+background:
+rgba(255,255,255,.06);
+
+border:
+1px solid rgba(255,255,255,.08);
+
+transition:.25s;
+}
+
+.closeBtn:hover{
+
+background:
+rgba(239,68,68,.16);
+
+transform:rotate(90deg);
+}
+/* ===== نافذة عرض التحاليل ===== */
+
+.testsPopup{
+
+position:fixed;
+
+inset:0;
+
+background:rgba(0,0,0,.65);
+
+backdrop-filter:blur(8px);
+
+display:none;
+
+align-items:center;
+
+justify-content:center;
+
+z-index:99999;
+
+padding:20px;
+
+}
+
+.testsPopupContent{
+
+width:min(520px,100%);
+
+max-height:80vh;
+
+overflow-y:auto;
+
+background:#0f172a;
+
+border:1px solid rgba(255,255,255,.08);
+
+border-radius:28px;
+
+padding:24px;
+
+position:relative;
+
+box-shadow:
+0 20px 60px rgba(0,0,0,.45);
+
+animation:popupShow .25s ease;
+
+}
+
+@keyframes popupShow{
+
+from{
+opacity:0;
+transform:scale(.92);
+}
+
+to{
+opacity:1;
+transform:scale(1);
+}
+
+}
+
+.closeTestsPopup{
+
+position:absolute;
+
+top:14px;
+
+left:14px;
+
+border:none;
+
+width:42px;
+
+height:42px;
+
+border-radius:14px;
+
+background:#ef4444;
+
+color:white;
+
+font-size:20px;
+
+cursor:pointer;
+
+font-weight:800;
+
+}
+
+.popupTestItem{
+
+background:
+rgba(59,130,246,.12);
+
+border:
+1px solid rgba(59,130,246,.24);
+
+padding:14px;
+
+border-radius:16px;
+
+margin-bottom:10px;
+
+font-weight:700;
+
+font-size:15px;
+
+color:#dbeafe;
+
+}
+/* ===== نافذة تصفير الشفت ===== */
+
+.shiftModal{
+
+position:fixed;
+
+inset:0;
+
+background:rgba(0,0,0,.7);
+
+backdrop-filter:blur(8px);
+
+display:none;
+
+align-items:center;
+
+justify-content:center;
+
+z-index:9999;
+
+padding:20px;
+
+}
+
+.shiftBox{
+
+width:min(420px,95%);
+
+background:#0f172a;
+
+border:1px solid rgba(255,255,255,.08);
+
+border-radius:28px;
+
+padding:28px;
+
+box-shadow:
+0 20px 60px rgba(0,0,0,.45);
+
+text-align:center;
+
+animation:popupShow .25s ease;
+
+}
+
+.shiftBox h2{
+
+margin-top:0;
+
+font-size:26px;
+
+font-weight:800;
+
+margin-bottom:12px;
+
+}
+
+.closeShift{
+
+width:100%;
+
+margin-top:14px;
+
+height:50px;
+
+border:none;
+
+border-radius:16px;
+
+background:#334155;
+
+color:white;
+
+font-family:'Cairo';
+
+font-weight:800;
+
+cursor:pointer;
+
+}
+@media(max-width:768px){
+  /* ===== نافذة عرض التحاليل ===== */
+
+.testsPopup{
+
+position:fixed;
+
+inset:0;
+
+background:rgba(0,0,0,.65);
+
+backdrop-filter:blur(8px);
+
+display:none;
+
+align-items:center;
+
+justify-content:center;
+
+z-index:99999;
+
+padding:20px;
+
+}
+
+.testsPopupContent{
+
+width:min(520px,100%);
+
+max-height:80vh;
+
+overflow-y:auto;
+
+background:#0f172a;
+
+border:1px solid rgba(255,255,255,.08);
+
+border-radius:28px;
+
+padding:24px;
+
+position:relative;
+
+box-shadow:
+0 20px 60px rgba(0,0,0,.45);
+
+animation:popupShow .25s ease;
+
+}
+
+@keyframes popupShow{
+
+from{
+opacity:0;
+transform:scale(.92);
+}
+
+to{
+opacity:1;
+transform:scale(1);
+}
+
+}
+
+.closeTestsPopup{
+
+position:absolute;
+
+top:14px;
+
+left:14px;
+
+border:none;
+
+width:42px;
+
+height:42px;
+
+border-radius:14px;
+
+background:#ef4444;
+
+color:white;
+
+font-size:20px;
+
+cursor:pointer;
+
+font-weight:800;
+
+}
+
+.popupTestItem{
+
+background:
+rgba(59,130,246,.12);
+
+border:
+1px solid rgba(59,130,246,.24);
+
+padding:14px;
+
+border-radius:16px;
+
+margin-bottom:10px;
+
+font-weight:700;
+
+font-size:15px;
+
+color:#dbeafe;
+
+}
+
+.page{
+padding:10px !important;
+}
+
+.topBar{
+flex-direction:column !important;
+align-items:flex-start !important;
+gap:16px !important;
+}
+
+.metrics{
+grid-template-columns:1fr !important;
+}
+
+.toolbar{
+flex-direction:column !important;
+align-items:stretch !important;
+}
+
+.actions{
+flex-direction:column !important;
+width:100% !important;
+}
+
+.actionBtn,
+.filterBtn{
+width:100% !important;
+}
+
+.tableWrap{
+overflow-x:auto !important;
+}
+
+table{
+min-width:900px !important;
+}
+
+.modal{
+width:100% !important;
+border-radius:22px !important;
+}
+
+.formGrid{
+grid-template-columns:1fr !important;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="orb a"></div>
+<div class="orb b"></div>
+<div class="orb c"></div>
+
+<div class="page" id="page">
+  <div class="topBar">
+    <div class="brand">
+      <div class="brandLogo">🏥</div>
+      <div class="brandText">
+        <h1>نظام إدارة التحليلات المختبرية</h1>
+        <div class="sub">لوحة التحكم الخاصة بالنظام لمراقبة التحاليل المختبرية لمستشفى نفط البصرة</div>
+      </div>
+    </div>
+
+    <div class="userChip">
+      <div class="pillRole">👤 {{ username }} — {{ role }}</div>
+      <div class="small">التحديث يكون مباشر للنظام </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="panel">
+      <div class="metrics">
+        <div class="metric blue">
+          <div class="t"><span>عدد التحاليل الكلي</span><span>📋</span></div>
+          <div class="v" id="totalCount">0</div>
+          <div class="d">إجمالي التحاليل لليوم الحالي</div>
+        </div>
+        <div class="metric green">
+          <div class="t"><span>التحاليل المكتملة</span><span>✅</span></div>
+          <div class="v" id="doneCount">0</div>
+          <div class="d">تم إنجازها بنجاح</div>
+        </div>
+        <div class="metric amber">
+          <div class="t"><span>قيد العمل</span><span>⏳</span></div>
+          <div class="v" id="workingCount">0</div>
+          <div class="d">ما زالت تحت الإجراء</div>
+        </div>
+        <div class="metric red">
+          <div class="t"><span>التنبيهات/التأخير</span><span>🚨</span></div>
+          <div class="v" id="alertCount">0</div>
+          <div class="d">الحالات التي تحتاج انتباهًا</div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="searchWrap">
+          <input id="search" class="search" placeholder="ابحث باسم، عمر، قسم، حالة، وقت...">
+        </div>
+<div class="sectionTabs">
+
+  <button class="sectionBtn" onclick="goSection('all')">
+    🏥 الكل
+  </button>
+
+  <button class="sectionBtn" onclick="goSection('الاستشارية')">
+    🩺 الاستشارية
+  </button>
+
+  <button class="sectionBtn" onclick="goSection('الانعاش')">
+    🚑 الانعاش
+  </button>
+
+  <button class="sectionBtn" onclick="goSection('ردهة قلبية رجال')">
+    👨 ردهة رجال
+  </button>
+
+  <button class="sectionBtn" onclick="goSection('ردهة قلبية نساء')">
+    👩 ردهة نساء
+  </button>
+
+</div>
+        <div class="filters">
+          <button class="filterBtn active" data-filter="all" onclick="setFilter('all', this)">الكل</button>
+          <button class="filterBtn" data-filter="done" onclick="setFilter('done', this)">مكتمل</button>
+          <button class="filterBtn" data-filter="working" onclick="setFilter('working', this)">قيد العمل</button>
+          <button class="filterBtn" data-filter="alert" onclick="setFilter('alert', this)">تنبيه</button>
+          <button class="filterBtn" data-filter="danger" onclick="setFilter('danger', this)">متأخر</button>
+        </div>
+
+       <div class="actions">
+
+{% if role == "x1" %}
+
+<button class="actionBtn green"
+onclick="openAddModal()">
+➕ إضافة مريض
+</button>
+
+<button class="actionBtn red"
+onclick="stopAlert()">
+🔕 إيقاف التنبيه
+</button>
+
+{% endif %}
+
+<!-- 🔥 الأرشيف -->
+
+{% if role == "view" %}
+
+<button class="actionBtn gray disabledBtn">
+🔒 الأرشيف
+</button>
+
+{% else %}
+
+<button
+class="actionBtn gray"
+id="generalArchiveBtn">
+
+🗂️ الأرشيف
+
+</button>
+
+<button
+class="actionBtn gray"
+id="privateArchiveBtn">
+
+🧾 الأرشيف الخاص
+
+</button>
+
+{% endif %}
+
+<div class="reportButtons">
+
+  <!-- 📅 يومية -->
+
+  {% if role == "view" %}
+
+  <button class="actionBtn disabledBtn">
+  🔒 أحصائية يومية
+  </button>
+
+  {% else %}
+
+  <button
+  class="actionBtn"
+  id="dailyStatsBtn">
+
+  📅 أحصائية يومية
+
+  </button>
+
+  {% endif %}
+
+  <!-- 🗓️ أسبوعية -->
+
+  {% if role == "view" %}
+
+  <button class="actionBtn disabledBtn">
+  🔒 أحصائية أسبوعية
+  </button>
+
+  {% else %}
+
+  <button
+  class="actionBtn"
+  id="weeklyStatsBtn">
+
+  🗓️ أحصائية أسبوعية
+
+  </button>
+
+  {% endif %}
+
+  <!-- 📊 شهرية -->
+
+  {% if role == "view" %}
+
+  <button class="actionBtn disabledBtn">
+  🔒 أحصائية شهرية
+  </button>
+
+  {% else %}
+
+  <button
+  class="actionBtn"
+  id="monthlyStatsBtn">
+
+  📊 أحصائية شهرية
+
+  </button>
+
+  {% endif %}
+
+  <!-- 🔥 التقويم -->
+
+  <div class="datePickerWrap">
+
+    {% if role == "view" %}
+
+<button class="actionBtn gray disabledBtn">
+🔒 تاريخ مخصص
+</button>
+
+{% else %}
+
+<button
+class="actionBtn gray"
+id="customStatsBtn">
+
+📁 تاريخ مخصص
+
+</button>
+
+{% endif %}
+
+{% if role == "x1" %}
+<button
+class="actionBtn gray userManageBtn"
+onclick="window.location='/users_panel'">
+
+👥 إدارة المستخدمين
+
+<span
+id="pendingBadge"
+class="pendingBadge"
+style="display:none">
+
+0
+
+</span>
+
+</button>
+
+
+{% endif %}
+
+   
+  </div>
+
+</div>
+
+<button class="actionBtn gray"
+onclick="manualRefresh()">
+🔄 تحديث
+</button>
+<button
+class="actionBtn red"
+onclick="openShiftResetModal()">
+
+🗑️ تصفير الشفت
+
+</button>
+<button
+class="actionBtn blue"
+onclick="openSettingsModal()">
+
+⚙️ الإعدادات
+
+</button>
+<button class="actionBtn gray"
+onclick="logout()">
+🚪 خروج
+</button>
+
+</div>
+      </div>
+
+      <div class="searchInfo" id="searchInfo">جاري تحميل البيانات...</div>
+
+      <div class="tableWrap">
+        <table id="table"></table>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<div class="footer">
+  <div class="footer">
+    برمجة وتصميم / التقني الطبي حيدر سعدون صالح
+  </div>
+</div>
+
+
+</div>
+
+<!-- ⚙️ نافذة إعدادات الحساب -->
+
+<div
+class="modalBackdrop"
+id="settingsBackdrop">
+
+<div
+class="modal"
+style="
+width:min(1600px,98vw);
+height:94vh;
+max-width:none;
+">
+
+<div class="modalHead">
+
+<div>
+
+<h3>
+⚙️ إعدادات الحساب
+</h3>
+
+<p>
+إدارة اسم المستخدم وكلمة المرور
+</p>
+
+</div>
+
+<button
+class="closeBtn"
+onclick="closeSettingsModal()">
+
+×
+
+</button>
+
+</div>
+
+<div class="modalBody">
+
+<div style="
+display:flex;
+flex-direction:column;
+gap:22px;
+">
+
+<!-- 👤 تغيير اسم المستخدم -->
+
+<div class="settingsCard">
+
+<div class="settingsCard">
+
+<h3 style="
+margin-top:0;
+margin-bottom:18px;
+font-size:16px;
+
+
+">
+
+👤 تغيير اسم المستخدم
+
+</h3>
+
+<div class="field full">
+
+<label>
+اسم المستخدم الجديد
+</label>
+
+<input
+id="newUsername"
+type="text"
+placeholder="اكتب اسم المستخدم الجديد">
+
+</div>
+
+<div class="field full">
+
+<label>
+كلمة المرور الحالية
+</label>
+
+<input
+id="currentPasswordForUsername"
+type="password"
+placeholder="اكتب كلمة المرور الحالية">
+
+</div>
+
+<button
+class="mBtn blue"
+style="
+margin-top:16px;
+width:100%;
+height:54px;
+"
+onclick="sendUsernameChangeRequest()">
+
+📨 إرسال طلب تغيير الاسم
+
+</button>
+
+</div>
+
+</div>
+
+<!-- 🔑 تغيير كلمة المرور -->
+
+<div class="field full">
+
+<div class="settingsCard">
+
+<h3 style="
+margin-top:0;
+margin-bottom:18px;
+font-size:20px;
+">
+
+🔑 تغيير كلمة المرور
+
+</h3>
+
+<div class="field full">
+
+<label>
+كلمة المرور الحالية
+</label>
+
+<input
+id="currentPassword"
+type="password"
+placeholder="اكتب كلمة المرور الحالية">
+
+</div>
+
+<div class="field full">
+
+<label>
+كلمة المرور الجديدة
+</label>
+
+<input
+id="newPassword"
+type="password"
+placeholder="اكتب كلمة المرور الجديدة">
+
+</div>
+
+<div class="field full">
+
+<label>
+تأكيد كلمة المرور الجديدة
+</label>
+
+<input
+id="confirmNewPassword"
+type="password"
+placeholder="أعد كتابة كلمة المرور الجديدة">
+
+</div>
+
+<div class="field full">
+
+<label>
+الكابتشا
+</label>
+
+<input
+id="settingsCaptcha"
+type="text"
+placeholder="كم ناتج العملية؟">
+
+<div
+id="settingsCaptchaQuestion"
+style="
+margin-top:10px;
+font-weight:800;
+font-size:18px;
+color:#93c5fd;
+text-align:center;
+">
+</div>
+
+</div>
+
+<button
+class="mBtn blue"
+style="
+margin-top:16px;
+width:100%;
+height:54px;
+"
+onclick="sendPasswordChangeRequest()">
+
+📨 إرسال طلب تغيير كلمة المرور
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<button
+class="mBtn gray"
+onclick="closeSettingsModal()">
+
+إغلاق
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div id="toast" class="toast"></div>
+
+<div class="modalBackdrop" id="modalBackdrop">
+  <div class="modal">
+    <div class="modalHead">
+      <div>
+        <h3 id="modalTitle">إضافة مريض</h3>
+        <p id="modalDesc">أدخل البيانات الأساسية للمريض بشكل منظم وسريع.</p>
+      </div>
+      <button class="closeBtn" onclick="closeModal()" aria-label="close">×</button>
+    </div>
+
+    <div class="modalBody">
+      <form id="patientForm" onsubmit="return false;">
+        <input type="hidden" id="patientId" value="">
+        <div class="formGrid">
+          <div class="field">
+            <label for="name">اسم المريض</label>
+            <input id="name" type="text" placeholder="أدخل الاسم">
+          </div>
+
+          <div class="field">
+            <label for="age">العمر</label>
+            <input id="age" type="number" min="1" max="120" placeholder="أدخل العمر">
+          </div>
+
+          <div class="field full">
+  <label for="section">القسم</label>
+
+  <select id="section">
+    <option>الاستشارية</option>
+    <option>الانعاش</option>
+    <option>ردهة قلبية رجال</option>
+    <option>ردهة قلبية نساء</option>
+  </select>
+</div>
+<!-- 🧪 التحاليل -->
+
+<div class="field full">
+
+<label>
+التحاليل المطلوبة
+</label>
+
+<div class="testsSections">
+
+<!-- ===== Biochemistry ===== -->
+
+<div class="testCategory">
+
+<h3>🧪 Biochemistry</h3>
+
+<div class="testsGrid">
+
+<label><input type="checkbox" name="tests" value="Glucose"> Glucose</label>
+
+<label><input type="checkbox" name="tests" value="Urea"> Urea</label>
+
+<label><input type="checkbox" name="tests" value="Creatinine"> Creatinine</label>
+
+<label><input type="checkbox" name="tests" value="Electrolyte"> Electrolyte</label>
+
+<label><input type="checkbox" name="tests" value="Lipid Profile"> Lipid Profile</label>
+
+<label><input type="checkbox" name="tests" value="Total cholesterol"> Total cholesterol</label>
+
+<label><input type="checkbox" name="tests" value="Triglycerides"> Triglycerides</label>
+
+<label><input type="checkbox" name="tests" value="HDL"> HDL</label>
+
+<label><input type="checkbox" name="tests" value="LDL"> LDL</label>
+
+<label><input type="checkbox" name="tests" value="Uric Acid"> Uric Acid</label>
+
+<label><input type="checkbox" name="tests" value="ALT/GPT"> ALT/GPT</label>
+
+<label><input type="checkbox" name="tests" value="AST/GOT"> AST/GOT</label>
+<label><input type="checkbox" name="tests" value="HBA1C"> HBA1C</label>
+
+</div>
+
+</div>
+
+<!-- ===== Hematology ===== -->
+
+<div class="testCategory">
+
+<h3>🩸 Hematology</h3>
+
+<div class="testsGrid">
+
+<label><input type="checkbox" name="tests" value="CBC"> CBC</label>
+
+<label><input type="checkbox" name="tests" value="ESR"> ESR</label>
+
+<label><input type="checkbox" name="tests" value="PT/INR"> PT/INR</label>
+
+<label><input type="checkbox" name="tests" value="PTT"> PTT</label>
+
+</div>
+
+</div>
+
+<!-- ===== Hormones ===== -->
+
+<div class="testCategory">
+
+<h3>🧬 Hormones</h3>
+
+<div class="testsGrid">
+
+<label><input type="checkbox" name="tests" value="TSH"> TSH</label>
+
+<label><input type="checkbox" name="tests" value="FT3"> FT3</label>
+
+<label><input type="checkbox" name="tests" value="FT4"> FT4</label>
+
+<label><input type="checkbox" name="tests" value="Vitamin D3"> Vitamin D3</label>
+
+<label><input type="checkbox" name="tests" value="Ferritin"> Ferritin</label>
+<label><input type="checkbox" name="tests" value="CRP"> CRP</label>
+
+</div>
+
+</div>
+
+<!-- ===== Cardiac ===== -->
+
+<div class="testCategory">
+
+<h3>❤️ Cardiac</h3>
+
+<div class="testsGrid">
+
+<label><input type="checkbox" name="tests" value="Troponin"> Troponin</label>
+
+<label><input type="checkbox" name="tests" value="Pro BNP"> Pro BNP</label>
+
+<label><input type="checkbox" name="tests" value="D-Dimer"> D-Dimer</label>
+
+<label><input type="checkbox" name="tests" value="CK-MB"> CK-MB</label>
+
+</div>
+
+</div>
+
+<!-- ===== Virology ===== -->
+
+<div class="testCategory">
+
+<h3>🦠 Virology</h3>
+
+<div class="testsGrid">
+
+<label><input type="checkbox" name="tests" value="HBsAg"> HBsAg</label>
+
+<label><input type="checkbox" name="tests" value="HIV"> HIV</label>
+
+<label><input type="checkbox" name="tests" value="HCV"> HCV</label>
+
+<label><input type="checkbox" name="tests" value="COVID-19"> COVID-19</label>
+
+</div>
+
+</div>
+
+</div>
+<!-- 🔥 الملاحظات -->
+<div class="field full">
+
+  <label for="extra">
+    ملاحظات
+  </label>
+
+  <input
+  id="extra"
+  placeholder="اكتب أي ملاحظة...">
+
+</div>
+
+</div>
+
+<div class="modalActions">
+
+<button type="button" class="mBtn gray" onclick="closeModal()">
+إلغاء
+</button>
+
+<button type="button" class="mBtn green" id="saveBtn" onclick="savePatient()">
+حفظ
+</button>
+
+</div>
+        <div class="smallHint">
+          هذه النافذة مخصصة للإضافة والتعديل فقط. الحالة يتم تحديثها من الأزرار السريعة داخل الجدول.
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- ===== نافذة عرض التحاليل ===== -->
+
+<div
+class="testsPopup"
+id="testsPopup">
+
+<div class="testsPopupContent">
+
+<button
+class="closeTestsPopup"
+onclick="
+document.getElementById('testsPopup').style.display='none'
+">
+
+✕
+</button>
+
+<h2 style="
+margin-top:0;
+margin-bottom:18px;
+font-size:24px;
+font-weight:800;
+text-align:center;
+">
+
+🧪 التحاليل المطلوبة
+
+</h2>
+
+<div id="testsPopupBody"></div>
+
+</div>
+
+</div>
+<audio id="bellSound" preload="auto">
+  <source src="https://www.soundjay.com/buttons/sounds/bell-ring-01.mp3">
+</audio>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+<!-- ===== النظام القديم معطل ===== -->
+
+<div
+id="reportDateModal"
+class="shiftModal"
+style="display:none !important;">
+
+<div class="shiftBox">
+
+<h2>
+📅 اختر التاريخ
+</h2>
+
+<input
+type="date"
+id="singleReportDate"
+class="reportInput">
+
+<button
+class="shiftBtn">
+
+تحميل التقرير
+
+</button>
+
+<button
+class="closeShift">
+
+إلغاء
+
+</button>
+
+</div>
+
+</div>
+
+<!-- ===== النظام القديم معطل ===== -->
+
+<div
+id="reportRangeModal"
+class="shiftModal"
+style="display:none !important;">
+
+<div class="shiftBox">
+
+<h2>
+📆 تقرير بين تاريخين
+</h2>
+
+<input
+type="date"
+id="fromReportDate"
+class="reportInput">
+
+<input
+type="date"
+id="toReportDate"
+class="reportInput">
+
+<button
+class="shiftBtn">
+
+تحميل التقرير
+
+</button>
+
+<button
+class="closeShift">
+
+إلغاء
+
+</button>
+
+</div>
+
+</div>
+
+<!-- ===== النظام القديم معطل ===== -->
+
+<div
+id="shiftModal"
+
+style="
+display:none !important;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.7);
+z-index:99999;
+align-items:center;
+justify-content:center;
+">
+
+<div style="
+background:#0f172a;
+padding:30px;
+border-radius:24px;
+width:min(420px,95%);
+text-align:center;
+">
+
+<h2>
+📊 اختر الشفت
+</h2>
+
+<button
+class="actionBtn"
+style="width:100%;margin-top:12px">
+
+📋 كل الشفتات
+
+</button>
+
+<button
+class="actionBtn green"
+style="width:100%;margin-top:12px">
+
+🌞 صباحي
+
+</button>
+
+<button
+class="actionBtn"
+style="width:100%;margin-top:12px">
+
+🌇 عصري
+
+</button>
+
+<button
+class="actionBtn red"
+style="width:100%;margin-top:12px">
+
+🌙 ليلي
+
+</button>
+
+<button
+class="actionBtn gray"
+style="width:100%;margin-top:18px">
+
+إغلاق
+
+</button>
+</div>
+
+</div>
+
+<script>
+  function openConfirmResetModal(){
+
+document.getElementById(
+"confirmResetModal"
+).style.display = "flex";
+
+}
+
+function closeConfirmResetModal(){
+
+document.getElementById(
+"confirmResetModal"
+).style.display = "none";
+
+}
+
+/* ===== تنفيذ التصفير الحقيقي ===== */
+
+document.addEventListener(
+"DOMContentLoaded",
+function(){
+
+const btn =
+document.getElementById(
+"confirmResetBtn"
+);
+
+if(btn){
+
+btn.onclick = async function(){
+
+const shift =
+window.currentShiftToReset;
+
+if(!shift){
+return;
+}
+
+try{
+
+const res = await fetch(
+"/reset_shift",
+{
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+shift:shift
+})
+}
+);
+
+const data = await res.json();
+
+if(data.success){
+
+showToast(
+data.message,
+"success"
+);
+
+closeConfirmResetModal();
+
+closeResetShiftModal();
+
+if(typeof loadPatients === "function"){
+loadPatients();
+}
+
+}else{
+
+showToast(
+data.message,
+"error"
+);
+
+}
+
+}catch(err){
+
+showToast(
+"حدث خطأ أثناء التصفير",
+"error"
+);
+
+}
+
+};
+
+}
+
+}); 
+
+const role = "{{ role }}";
+const username = "{{ username }}";
+/* ===== فتح نافذة التصفير ===== */
+
+function openShiftResetModal(){
+
+const modal =
+document.getElementById(
+"resetShiftModal"
+);
+
+if(modal){
+
+modal.style.display = "flex";
+
+}else{
+
+alert("Modal not found");
+
+}
+
+}
+/* ===== إغلاق ===== */
+
+function closeResetShiftModal(){
+
+document.getElementById(
+"resetShiftModal"
+).style.display = "none";
+
+}
+
+/* ===== تأكيد التصفير ===== */
+
+async function confirmShiftReset(shift){
+window.currentShiftToReset = shift;
+
+openConfirmResetModal();
+
+return;
+
+/* ===== إرسال الطلب ===== */
+
+try{
+
+const res = await fetch(
+"/reset_shift",
+{
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+shift:shift
+})
+}
+);
+
+const data = await res.json();
+
+/* ===== نجاح ===== */
+
+if(data.success){
+
+showToast(
+data.message,
+"success"
+);
+
+closeResetShiftModal();
+
+/* تحديث */
+
+if(typeof loadPatients === "function"){
+loadPatients();
+}
+
+/* ===== فشل ===== */
+
+}else{
+
+showToast(
+data.message,
+"error"
+);
+
+}
+
+}catch(err){
+
+showToast(
+"حدث خطأ أثناء التصفير",
+"error"
+);
+
+}
+
+}
+
+/* ===== إغلاق عند الضغط بالخارج ===== */
+
+window.addEventListener(
+"click",
+function(e){
+
+const modal =
+document.getElementById(
+"resetShiftModal"
+);
+
+if(e.target === modal){
+
+closeResetShiftModal();
+
+}
+
+}
+);
+</script>
+
+<script src="/static/js/dashboard.js"></script>
+
+</div>
+
+</div>
+<!-- ===== نافذة تصفير الشفت ===== -->
+
+<div
+id="resetShiftModal"
+class="shiftModal"
+style="display:none;align-items:center;justify-content:center;">
+
+<div class="shiftBox">
+
+<h2>
+🗑️ تصفير الشفت
+</h2>
+
+<p
+style="
+margin-top:10px;
+opacity:.8;
+font-size:14px;
+">
+
+اختر الشفت الذي تريد تصفيره
+
+</p>
+
+<button
+class="actionBtn green"
+style="width:100%;margin-top:16px"
+onclick="confirmShiftReset('الصباحي')">
+
+🌞 الشفت الصباحي
+
+</button>
+
+<button
+class="actionBtn"
+style="width:100%;margin-top:12px"
+onclick="confirmShiftReset('العصري')">
+
+🌇 الشفت العصري
+
+</button>
+
+<button
+class="actionBtn red"
+style="width:100%;margin-top:12px"
+onclick="confirmShiftReset('الليلي')">
+
+🌙 الشفت الليلي
+
+</button>
+
+<button
+class="actionBtn gray"
+style="width:100%;margin-top:18px"
+onclick="closeResetShiftModal()">
+
+إلغاء
+
+</button>
+</div>
+</div>
+<!-- ===== نافذة تأكيد التصفير ===== -->
+
+<div
+id="confirmResetModal"
+class="shiftModal"
+style="display:none;">
+
+  <div class="shiftBox">
+
+    <h2>
+      ⚠️ تأكيد التصفير
+    </h2>
+
+    <p
+    style="
+    opacity:.85;
+    line-height:2;
+    margin-bottom:24px;
+    ">
+
+      هل أنت متأكد من تصفير الشفت؟
+
+      <br>
+
+      سيتم نقل المرضى إلى الأرشيف.
+
+    </p>
+
+    <button
+    id="confirmResetBtn"
+    class="shiftBtn"
+    style="
+    width:100%;
+    margin-bottom:12px;
+    background:
+    linear-gradient(
+      135deg,
+      #ef4444,
+      #dc2626
+    );
+    ">
+
+      🗑️ نعم، تصفير الشفت
+
+    </button>
+
+    <button
+    class="shiftBtn"
+    onclick="closeConfirmResetModal()"
+    style="
+    width:100%;
+    background:#475569;
+    ">
+
+      إلغاء
+
+    </button>
+
+  </div>
+
+</div>
+<!-- ===== نافذة التاريخ المخصص ===== -->
+
+<div
+id="customDateModal"
+class="shiftModal"
+style="display:none;">
+
+  <div class="shiftBox">
+
+    <h2>
+      📁 تقرير مخصص
+    </h2>
+
+    <p
+    style="
+    opacity:.8;
+    margin-bottom:20px;
+    ">
+    اختر الفترة الزمنية
+    </p>
+
+    <input
+type="date"
+id="oldCustomFromDate"
+class="reportInput"
+style="
+width:100%;
+margin-bottom:14px;
+">
+
+<input
+type="date"
+id="oldCustomToDate"
+class="reportInput"
+placeholder="2026-05-08"
+style="
+width:100%;
+margin-bottom:18px;
+">
+    <button
+    class="shiftBtn"
+    onclick="downloadCustomRange()"
+    style="
+    width:100%;
+    margin-bottom:10px;
+    ">
+
+      📥 تنزيل التقرير
+
+    </button>
+
+<button
+class="shiftBtn"
+onclick="closeCustomDateModal()"
+style="
+width:100%;
+background:linear-gradient(
+135deg,
+#475569,
+#64748b
+);
+margin-top:10px;
+">
+
+إلغاء
+
+</button>
+
+  </div>
+
+</div>
+</body>
+</html>
