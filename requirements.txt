@@ -1,6 +1,5 @@
 Flask
 Flask-SocketIO
-eventlet
 gunicorn
 psycopg2-binary
 Flask-Limiter
