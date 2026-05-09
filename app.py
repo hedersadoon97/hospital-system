@@ -37,7 +37,11 @@ socketio = SocketIO(
 
     cors_allowed_origins="*",
 
-    async_mode="threading"
+    async_mode="threading",
+
+    logger=False,
+
+    engineio_logger=False
 
 )
 
@@ -484,7 +488,7 @@ CREATE TABLE IF NOT EXISTS change_requests (
     conn.close()
 
 # ===== النسخ الاحتياطي =====
-def backup_database():
+#def backup_database():
 
     # إنشاء مجلد النسخ الاحتياطية
     os.makedirs("backups", exist_ok=True)
