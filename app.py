@@ -15,6 +15,7 @@ import os
 import time
 import shutil
 app = Flask(__name__)
+app.secret_key = "hospital_secret_key_123"
 limiter = Limiter(
     key_func=get_remote_address,
     app=app,
