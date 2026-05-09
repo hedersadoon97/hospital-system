@@ -488,7 +488,7 @@ CREATE TABLE IF NOT EXISTS change_requests (
     conn.close()
 
 # ===== النسخ الاحتياطي =====
-#def backup_database():
+def backup_database():
 
     # إنشاء مجلد النسخ الاحتياطية
     os.makedirs("backups", exist_ok=True)
@@ -521,7 +521,7 @@ CREATE TABLE IF NOT EXISTS change_requests (
 # ===== تشغيل التهيئة =====
 init_db()
 
-backup_database()
+#backup_database()
 
 
 # ===== تحويل الحالات القديمة =====
